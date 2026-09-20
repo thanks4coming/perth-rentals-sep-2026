@@ -429,10 +429,11 @@
       const group = L.featureGroup();
       const popupWidth = window.matchMedia("(max-width: 720px)").matches ? 240 : 280;
       pins.forEach(function (p) {
-        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, bookedOrLooked.has(p.name)), title: p.address });
+        const reached = bookedOrLooked.has(p.name);
+        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, reached), title: p.address });
         marker.bindPopup(
           '<div class="popup"><a href="' + p.href + '"><img alt="" src="' + p.thumb + '"></a><b>' + p.address + '</b>' +
-          '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · cap ' + p.cap + '</div>' +
+          '<div class="meta">' + (reached ? 'Reached out' : 'Not reached') + ' · ' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · cap ' + p.cap + '</div>' +
           '<a href="' + p.href + '">Listing</a></div>',
           { maxWidth: popupWidth, autoPanPadding: [28, 28] }
         );
