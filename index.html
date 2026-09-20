@@ -48,7 +48,7 @@
     .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
     .tab {
       border: 1px solid var(--line); background: var(--card); color: var(--ink);
-      border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer;
+      border-radius: 999px; padding: 10px 16px; font: inherit; font-weight: 650; cursor: pointer;
     }
     .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
     .panel { display: none; }
@@ -169,7 +169,7 @@
     </div>
 
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-run" aria-selected="true" aria-controls="panel-run">Locked</button>
+      <button class="tab" role="tab" id="tab-run" aria-selected="true" aria-controls="panel-run">Locked in</button>
       <button class="tab" role="tab" id="tab-wait" aria-selected="false" aria-controls="panel-wait">Awaiting a time</button>
       <button class="tab" role="tab" id="tab-map" aria-selected="false" aria-controls="panel-map">Map</button>
     </div>
