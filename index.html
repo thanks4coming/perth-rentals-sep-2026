@@ -41,8 +41,8 @@
     .legend .gold { background: var(--gold); }
     .legend .silver { background: var(--silver); }
     .legend .bronze { background: var(--bronze); }
-    .legend .ring-booked { background: transparent; box-shadow: inset 0 0 0 2px #1b8a3a; }
-    .legend .ring-open { background: transparent; box-shadow: inset 0 0 0 2px #c62828; }
+    .legend .ring-booked { background: transparent; box-shadow: inset 0 0 0 2px #8ee0a0; }
+    .legend .ring-open { background: transparent; box-shadow: inset 0 0 0 2px #ff9a9a; }
     .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
     .tab {
       border: 1px solid var(--line); background: var(--card); color: var(--ink);
@@ -429,7 +429,7 @@
 
     function pinIcon(tier, seen) {
       const fill = colours[tier];
-      const ring = seen ? "#1b8a3a" : "#c62828";
+      const ring = seen ? "#8ee0a0" : "#ff9a9a";
       const html = '<div style="width:20px;height:20px;border-radius:50%;background:' + fill + ';border:3px solid ' + ring + ';box-sizing:border-box"></div>';
       return L.divIcon({ className: "", html: html, iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -11] });
     }
