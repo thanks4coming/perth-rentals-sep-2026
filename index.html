@@ -41,6 +41,8 @@
     .legend .gold { background: var(--gold); }
     .legend .silver { background: var(--silver); }
     .legend .bronze { background: var(--bronze); }
+    .legend .ring-booked { background: transparent; box-shadow: inset 0 0 0 2px #1b8a3a; }
+    .legend .ring-open { background: transparent; box-shadow: inset 0 0 0 2px #c62828; }
     .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
     .tab {
       border: 1px solid var(--line); background: var(--card); color: var(--ink);
@@ -89,6 +91,8 @@
       <span><i class="gold"></i>Gold — actually good</span>
       <span><i class="silver"></i>Silver — take it</span>
       <span><i class="bronze"></i>Bronze — average / a catch</span>
+      <span><i class="ring-booked"></i>Green ring — booked or already looked</span>
+      <span><i class="ring-open"></i>Red ring — no inspect booked</span>
     </div>
 
     <div class="tabs" role="tablist">
@@ -419,11 +423,15 @@
     ];
 
     const colours = { gold: "#c5a017", silver: "#8d9196", bronze: "#9a6b3d" };
+    const bookedOrLooked = new Set([
+      "Lucknow", "Reserve", "Melville Pde", "Bridges", "Delhi", "Loftus", "Carr", "Ardross"
+    ]);
 
-    function pinIcon(tier) {
+    function pinIcon(tier, seen) {
       const fill = colours[tier];
-      const html = '<div style="width:18px;height:18px;border-radius:50%;background:' + fill + ';border:2px solid #fff;box-sizing:border-box"></div>';
-      return L.divIcon({ className: "", html: html, iconSize: [18, 18], iconAnchor: [9, 9], popupAnchor: [0, -10] });
+      const ring = seen ? "#1b8a3a" : "#c62828";
+      const html = '<div style="width:20px;height:20px;border-radius:50%;background:' + fill + ';border:3px solid ' + ring + ';box-sizing:border-box"></div>';
+      return L.divIcon({ className: "", html: html, iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -11] });
     }
 
     function initMap() {
@@ -437,7 +445,7 @@
       }).addTo(map);
       const group = L.featureGroup();
       pins.forEach(function (p) {
-        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier), title: p.address });
+        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, bookedOrLooked.has(p.name)), title: p.address });
         marker.bindPopup(
           '<div class="popup"><a href="' + p.href + '"><img alt="" src="' + p.thumb + '"></a><b>' + p.address + '</b>' +
           '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · ' + p.bid + '</div>' +
