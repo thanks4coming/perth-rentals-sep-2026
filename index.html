@@ -548,6 +548,11 @@
         });
       }
     });
+    if (document.getElementById("map-block").open) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(initMap);
+      });
+    }
   </script>
 </body>
 </html>
