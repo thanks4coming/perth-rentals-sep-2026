@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Locked run and the waitlist</title>
+  <style>
+    :root {
+      --bg: #f6f5f2;
+      --ink: #1c1b19;
+      --muted: #5c5a55;
+      --faint: #7a7873;
+      --line: #e4e1da;
+      --card: #fff;
+      --ok: #1f6b45;
+      --ok-bg: #e8f5ee;
+      --warn: #8a5a12;
+      --warn-bg: #f8efd8;
+      --info: #1f4f7a;
+      --info-bg: #e8f0f8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    main { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 24px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
+    h2 { font-size: 16px; font-weight: 650; margin: 28px 0 8px; }
+    .lede { color: var(--muted); margin: 0 0 20px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .stat b { display: block; font-size: 22px; font-weight: 650; }
+    .stat span { color: var(--muted); font-size: 12px; }
+    .stat.ok b { color: var(--ok); }
+    .stat.warn b { color: var(--warn); }
+    .callout {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 0 0 12px;
+      font-size: 14px;
+    }
+    .callout.warn { background: var(--warn-bg); color: #3d2a08; }
+    .callout.info { background: var(--info-bg); color: #16324d; }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 12px; }
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+    table { border-collapse: collapse; width: 100%; min-width: 860px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 13px; }
+    th { position: sticky; top: 0; background: #faf9f6; font-size: 12px; color: var(--muted); font-weight: 650; }
+    tr:nth-child(even) td { background: #faf9f6; }
+    td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .who { white-space: nowrap; font-weight: 650; }
+    a { color: var(--info); }
+    .note { color: var(--muted); font-size: 13px; margin-top: 10px; }
+    .source { color: var(--faint); font-size: 12px; margin-top: 8px; }
+    .tone-info td:first-child { box-shadow: inset 3px 0 0 #5b8fb8; }
+    .tone-ok td:first-child { box-shadow: inset 3px 0 0 #3d9a68; }
+    .tone-warn td:first-child { box-shadow: inset 3px 0 0 #c48a2a; }
+    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      table { min-width: 980px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Locked run and the waitlist</h1>
+    <p class="lede">Monday 21 and Tuesday 22 Sep 2026. You do Lucknow → Reserve → Melville Parade. Person B does 20/18 Bridges. Nothing booked from here. Asks rechecked 20 Sep evening.</p>
+
+    <div class="stats">
+      <div class="stat ok"><b>5</b><span>Locked opens</span></div>
+      <div class="stat"><b>13</b><span>Awaiting or clash</span></div>
+      <div class="stat warn"><b>4:05</b><span>Leave Reserve</span></div>
+      <div class="stat"><b>0</b><span>Mon/Tue morning slots</span></div>
+    </div>
+
+    <div class="callout warn">Reserve ends 4:05. Melville Parade starts 4:30. Leave the park house at 4:05 and take the freeway south. If you are still on Reserve Street at 4:15 you miss Melville.</div>
+    <div class="callout info">All three south sweeps are in. Still no Mon/Tue morning opens under $900. New afternoon times: 225 Marmion Palmyra $850 3/1/4 Monday 4:30 (clash with Melville Parade); 105A Ardross Applecross $825 3/2/2 Tuesday ~3:00 (fits before Loftus 4:30). 18B Jean still clashes Bridges at 4:45.</div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-run" aria-selected="true" aria-controls="panel-run">Locked timetable</button>
+      <button class="tab" role="tab" id="tab-wait" aria-selected="false" aria-controls="panel-wait">Awaiting contact or a time</button>
+    </div>
+
+    <section class="panel active" id="panel-run" role="tabpanel">
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Who</th><th>When</th><th>Address</th><th>Ask</th><th>What it is</th><th>2 cars</th><th>Write</th><th>Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tone-info">
+              <td class="who">You</td>
+              <td>Mon 21 · 12:30–12:45. Be there 12:20.</td>
+              <td>3/3-9 Lucknow Pl, West Perth</td>
+              <td class="num">$750</td>
+              <td>2 bed / 2 bath / 1 basement. Fridge in. Available 25 Sep. City West / PSP. Tired 2000s.</td>
+              <td>1 bay. Street evenings only.</td>
+              <td class="num">$750. Do not chase.</td>
+              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td>
+            </tr>
+            <tr class="tone-ok">
+              <td class="who">You</td>
+              <td>Mon 21 · 3:45–4:05. Arrive 3:35. Walk out 4:05.</td>
+              <td>59 Reserve St, Wembley</td>
+              <td class="num">$800</td>
+              <td>2-bed house by the park. Extra living as office. Pets. ~3 off-street. The one you want.</td>
+              <td>Easy. Front yard.</td>
+              <td class="num">$800. $820 if it holds up.</td>
+              <td><a href="https://book.inspectrealestate.com.au/reiwa/160148-0/100P15604?address=59+Reserve+Street%2C+Wembley&amp;type=rental">IRE 3:45</a></td>
+            </tr>
+            <tr class="tone-ok">
+              <td class="who">You</td>
+              <td>Mon 21 · 4:30–4:45. 18–25 min from Reserve.</td>
+              <td>2/175 Melville Pde, Como</td>
+              <td class="num">$795</td>
+              <td>3/2 river villa. Fresh paint, timber-look floors. Canning Bridge at the door. Freeway noise.</td>
+              <td>Garage + allocated front bay. Confirm both.</td>
+              <td class="num">$795. $810 if both bays are yours.</td>
+              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td>
+            </tr>
+            <tr class="tone-warn">
+              <td class="who">Person B</td>
+              <td>Mon 21 · 4:45–5:00</td>
+              <td>20/18 Bridges Rd, Melville</td>
+              <td class="num">$700</td>
+              <td>3/1/1 unit. Pergola, deeper garage. Under Melville low end $740. Copy says tired. After it, walk to Kitchener.</td>
+              <td>1 garage. Street usually OK.</td>
+              <td class="num">$700. Stop there.</td>
+              <td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td class="who">Either</td>
+              <td>Tue 22 · 4:30–4:45</td>
+              <td>132 Loftus St, North Perth</td>
+              <td class="num">$800</td>
+              <td>3-bed house + sunroom/office. Double garage. Best leftover if Monday does not land.</td>
+              <td>Remote double garage. Easy.</td>
+              <td class="num">$800. $820 if you want it.</td>
+              <td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Lucknow listing: <a href="https://reiwa.com.au/3-3-9-lucknow-place-west-perth-5054319/">REIWA</a>.
+        Melville listing: <a href="https://reiwa.com.au/2-175-melville-parade-como-5049323/">REIWA</a>.
+        Bridges TenantApp: <a href="https://www.tenantapp.com.au/Rentals/ViewListing/3289819">20/18</a>.
+        No published Monday or Tuesday morning opens south of the river that still fit under $900 and in by 5 Oct.
+      </p>
+    </section>
+
+    <section class="panel" id="panel-wait" role="tabpanel">
+      <div class="callout info">Two of these now have a Monday afternoon time — both clash with Melville Parade / Bridges. The rest still need a private Tuesday 9–12. Priority after the clash pair: Robert, then Kitchener, then the Canning Hwy sunroom.</div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th><th>Address</th><th>Ask</th><th>What it is</th><th>Write</th><th>Status</th><th>Contact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tone-warn">
+              <td>Clash</td><td>6/287 Canning Hwy, Como</td><td class="num">$600</td>
+              <td>3/1 townhouse, garage + bay, store, courtyard. Rear of complex. Pets considered. 6-MONTH LEASE ONLY. Mon 21 4:30–4:45 — same time as Melville Parade.</td>
+              <td class="num">$600 if you accept 6 months.</td><td>Has a time. Clash.</td>
+              <td><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/">Semra 08 9217 2000</a></td>
+            </tr>
+            <tr class="tone-warn">
+              <td>Clash</td><td>1/286 Mill Point Rd, South Perth</td><td class="num">$765</td>
+              <td>Furnished 2/1 townhouse. Both beds have balconies. 1 garage. No study. Mon 21 4:15–4:30 — you are leaving Reserve then.</td>
+              <td class="num">$765 furnished. Skip unless you want furniture.</td><td>Has a time. Clash.</td>
+              <td><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/">Petra 9277 4200</a></td>
+            </tr>
+            <tr class="tone-ok">
+              <td>Clash</td><td>18B Jean St, Beaconsfield</td><td class="num">$800</td>
+              <td>3/1 duplex, fresh 70s, oak-look floors, new cooker. Carport + tandem driveway. Big north yard. Available 25 Sep. Mon 21 4:45–5:00 — same minute as Bridges. 20A Jean is the leased one.</td>
+              <td class="num">$800</td><td>Has a time. Clash.</td>
+              <td><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/">Monique 08 9319 2024</a></td>
+            </tr>
+            <tr class="tone-ok">
+              <td>Clash</td><td>225 Marmion St, Palmyra</td><td class="num">$850</td>
+              <td>3/1 house, 4 cars, shed, floorboards, grassed yard. Available now. Mon 21 4:30 — same minute as Melville Parade. Person B could do this instead of Bridges, not both.</td>
+              <td class="num">$850</td><td>Has a time. Clash.</td>
+              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839">TenantApp</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>Tue 3pm</td><td>105A Ardross St, Applecross</td><td class="num">$825</td>
+              <td>3/2 house, separate formal living, ensuite, double carport + long driveway, pets. Available 21 Sep. One Tuesday slot ~3:00. Then Loftus at 4:30 is a 25–35 min drive.</td>
+              <td class="num">$825</td><td>Has a time. Tuesday.</td>
+              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183">TenantApp</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>1</td><td>1/127 Robert St, Como</td><td class="num">$700</td>
+              <td>3/1 villa, two carports, metres from the river. Same money as Bridges, better parking. Available 24 Sep.</td>
+              <td class="num">$700</td><td>No times. Register.</td>
+              <td><a href="https://book.inspectrealestate.com.au/reiwa/159299-0/WA88423998?address=1%2F127+Robert+Street%2C+Como&amp;type=rental">IRE register</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>2</td><td>1/27 Kitchener Rd, Melville</td><td class="num">$670</td>
+              <td>3/1 villa. Copy: carport + 2 open bays. Historic photos. Two streets from Bridges. Available 25 Sep.</td>
+              <td class="num">$650–$670</td><td>No times. Call.</td>
+              <td><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/">Fon 0406 752 948</a></td>
+            </tr>
+            <tr class="tone-warn">
+              <td>3</td><td>2/447 Canning Hwy, Como</td><td class="num">$620</td>
+              <td>2/1 plus a sunroom off the lounge — that is the study. Available 18 Sep. Cars not listed.</td>
+              <td class="num">$620</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/">Kasey 0482 649 798</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>4</td><td>12/15 Rosalind Way, Coolbellup</td><td class="num">$650</td>
+              <td>2/1 top-floor reno. Flexible third bedroom / office plus a study nook. Two tandem bays + store. Opposite Rinaldo Park.</td>
+              <td class="num">$650</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/">Onyinye 0491 208 800</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>5</td><td>4/21 Earlston Pl, Booragoon</td><td class="num">$850</td>
+              <td>3/2 villa plus a study. One garage. Available 2 Oct. Harcourts — no times.</td>
+              <td class="num">$850</td><td>No home opens.</td>
+              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436">TenantApp</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>6</td><td>2/3 Thelma St, Como</td><td class="num">$750</td>
+              <td>Renovated 3/1 villa. Third bedroom is the office. 1 bay + street. Available 2 Oct.</td>
+              <td class="num">$750</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/">Primus 08 9368 1855</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>7</td><td>1/147 Melville Pde, Como</td><td class="num">$850</td>
+              <td>2/2 townhouse. Upstairs second living is the study. Four cars. Reno kitchen and baths.</td>
+              <td class="num">$850 if that room is closed.</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/">Semra 0433 329 376</a></td>
+            </tr>
+            <tr class="tone-info">
+              <td>8</td><td>44A Warragoon Cr, Attadale</td><td class="num">$700</td>
+              <td>3/1, 2 cars. Available 30 Sep.</td>
+              <td class="num">$700</td><td>No times. Register.</td>
+              <td><a href="https://book.inspectrealestate.com.au/reiwa/14610-0/R4508729?address=44A+Warragoon+Crescent%2C+Attadale&amp;type=rental">IRE register</a></td>
+            </tr>
+            <tr>
+              <td>9</td><td>3/59 Robert St, Como</td><td class="num">$640</td>
+              <td>2/1 villa, big yard, pets, being painted. No third room. Available 28 Sep.</td>
+              <td class="num">$640</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/">Jazzmyn 0438 758 781</a></td>
+            </tr>
+            <tr>
+              <td>10</td><td>52D Axford St, Como</td><td class="num">$800</td>
+              <td>2/1 villa, pets, courtyard. No study. Available 11 Sep.</td>
+              <td class="num">$780–$800</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/52d-axford-street-como-5058044/">Semra 0433 329 376</a></td>
+            </tr>
+            <tr>
+              <td>11</td><td>37B Bristol Ave, Bicton</td><td class="num">$660</td>
+              <td>2/1, sunken lounge, 1 garage. Lounge is not a study. Available 28 Aug.</td>
+              <td class="num">$660</td><td>No home opens.</td>
+              <td><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/">Kayla 0487 937 855</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <h2>Source</h2>
+      <p class="source">Live REIWA, TenantApp, and Inspect Real Estate pages, 20 Sep 2026 evening. Lucknow has also shown $790; Bridges TenantApp has also shown $750 — live REIWA tonight is $750 and $700. Melville Parade header lists 1 car; the copy still says garage plus a front bay.</p>
+    </footer>
+  </main>
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const panels = { "tab-run": "panel-run", "tab-wait": "panel-wait" };
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.setAttribute("aria-selected", String(t === tab)));
+        Object.values(panels).forEach((id) => document.getElementById(id).classList.remove("active"));
+        document.getElementById(panels[tab.id]).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
