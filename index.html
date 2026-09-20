@@ -4,148 +4,232 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Locked, awaiting, map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
-      --bg: #f6f5f2;
-      --ink: #1c1b19;
-      --muted: #5c5a55;
-      --faint: #7a7873;
-      --line: #e4e1da;
-      --card: #fff;
+      --bg: #faf8f3;
+      --ink: #121314;
+      --muted: #5a5d59;
+      --faint: #5a5d59;
+      --line: #c8cbc6;
+      --card: #faf8f3;
       --gold: #ffcc00;
       --silver: #b8c4d4;
       --bronze: #ff8a2a;
       --ring-booked: #5dcc86;
       --ring-open: #ef6d68;
-      --info: #1f4f7a;
+      --seal: #7a211e;
+      --sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, monospace;
     }
     * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
       margin: 0;
-      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: var(--sans);
+      font-size: 1rem;
+      line-height: 1.5;
       color: var(--ink);
       background: var(--bg);
     }
-    main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; }
-    h1 { font-size: 24px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
-    h2 { font-size: 16px; font-weight: 650; margin: 28px 0 8px; }
-    .lede { color: var(--muted); margin: 0 0 20px; }
-    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 8px; }
-    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-    .stat b { display: block; font-size: 22px; font-weight: 650; }
-    .stat span { color: var(--muted); font-size: 12px; }
-    .legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 13px; margin: 12px 0 4px; }
+    main { max-width: 1280px; margin: 0 auto; padding: 28px 20px 72px; }
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.75rem;
+    }
+    h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2rem 0 0.5rem;
+    }
+    .lede { color: var(--muted); margin: 0 0 1.25rem; max-width: 66ch; }
+    .counts {
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--line);
+      padding: 0.65rem 0;
+      margin: 0 0 0.85rem;
+    }
+    .counts b { font-weight: 600; }
+    .counts .sep { color: var(--line); margin: 0 0.65rem; }
+    .legend {
+      display: flex;
+      gap: 14px 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin: 0 0 0.25rem;
+    }
     .legend i {
-      display: inline-block; width: 12px; height: 12px; border-radius: 50%;
-      margin-right: 6px; vertical-align: -1px;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: -1px;
     }
     .legend .gold { background: var(--gold); }
     .legend .silver { background: var(--silver); }
     .legend .bronze { background: var(--bronze); }
     .legend .ring-booked { background: transparent; box-shadow: inset 0 0 0 3px var(--ring-booked); }
     .legend .ring-open { background: transparent; box-shadow: inset 0 0 0 3px var(--ring-open); }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
-    .tab {
-      border: 1px solid var(--line); background: var(--card); color: var(--ink);
-      border-radius: 999px; padding: 10px 16px; font: inherit; font-weight: 650; cursor: pointer;
+    .tabs {
+      display: flex;
+      gap: 1.25rem;
+      margin: 1.25rem 0 0.9rem;
+      border-bottom: 1px solid var(--line);
     }
-    .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .tab {
+      appearance: none;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      margin-bottom: -1px;
+      padding: 0.45rem 0 0.55rem;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 0;
+      box-shadow: none;
+      touch-action: manipulation;
+      min-height: 40px;
+    }
+    .tab[aria-selected="true"] {
+      color: var(--seal);
+      border-bottom-color: var(--seal);
+      background: transparent;
+    }
     .panel { display: none; }
     .panel.active { display: block; }
-    .scroll { overflow: visible; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
-    table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 960px; }
-    th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13px; }
+    .scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      background: transparent;
+    }
+    table { border-collapse: collapse; width: 100%; min-width: 960px; }
+    th, td {
+      text-align: left;
+      padding: 0.45rem 0.65rem;
+      vertical-align: middle;
+      font-size: 0.88rem;
+    }
     thead th {
       position: sticky;
       top: 0;
       z-index: 4;
-      background: #faf9f6;
-      font-size: 12px;
+      background: var(--bg);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
       color: var(--muted);
-      font-weight: 650;
-      box-shadow: inset 0 -1px 0 var(--line);
+      border-bottom: 1px solid var(--ink);
     }
-    tr:nth-child(even) td { background: #faf9f6; }
-    td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; width: 4.5rem; }
-    td.pic { width: 86px; padding: 8px 10px; }
+    td { border-bottom: 1px solid var(--line); }
+    td.num {
+      text-align: right;
+      white-space: nowrap;
+      font-family: var(--mono);
+      font-variant-numeric: tabular-nums;
+      width: 4.5rem;
+    }
+    td.pic { width: 86px; padding: 0.5rem 0.65rem; }
     td.pic a { display: block; line-height: 0; }
     .thumb {
-      width: 70px; height: 70px; object-fit: cover; border-radius: 4px;
-      display: block; background: #eceae4;
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      display: block;
+      background: #eeeae3;
     }
-    .who { white-space: nowrap; font-weight: 650; }
-    a { color: var(--info); }
-    .source { color: var(--faint); font-size: 12px; margin-top: 8px; }
-    tr.tone-gold td { background: #fff4b0 !important; }
-    tr.tone-silver td { background: #e8eef6 !important; }
-    tr.tone-bronze td { background: #ffe4cc !important; }
+    .who { white-space: nowrap; font-weight: 600; }
+    a {
+      color: var(--seal);
+      text-underline-offset: 0.15em;
+    }
+    .source { color: var(--muted); font-size: 0.88rem; margin-top: 0.5rem; max-width: 66ch; }
+    tr.tone-gold td { background: #fff4b0; }
+    tr.tone-silver td { background: #e8eef6; }
+    tr.tone-bronze td { background: #ffe4cc; }
     .tone-gold td:first-child { box-shadow: inset 8px 0 0 var(--gold); }
     .tone-silver td:first-child { box-shadow: inset 8px 0 0 var(--silver); }
     .tone-bronze td:first-child { box-shadow: inset 8px 0 0 var(--bronze); }
-    #map { height: 640px; width: 100%; border: 1px solid var(--line); border-radius: 10px; background: #e8e4dc; }
-    .popup { min-width: 200px; }
-    .popup img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px; }
+    #map {
+      height: 640px;
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #eeeae3;
+    }
+    .popup { min-width: 200px; font-family: var(--sans); }
+    .popup img { width: 100%; height: 110px; object-fit: cover; display: block; margin-bottom: 8px; }
     .popup b { display: block; margin-bottom: 4px; }
-    .popup .meta { color: #5c5a55; font-size: 12px; }
-    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
-    html { -webkit-text-size-adjust: 100%; }
-    .scroll { -webkit-overflow-scrolling: touch; }
-    .tab { touch-action: manipulation; min-height: 40px; }
+    .popup .meta { color: var(--muted); font-size: 0.82rem; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--ink); }
     .leaflet-container { font: inherit; }
     @media (max-width: 720px) {
-      main { padding: 16px 12px calc(32px + env(safe-area-inset-bottom, 0px)); }
-      h1 { font-size: 22px; }
-      .lede { font-size: 14px; margin-bottom: 14px; }
-      .stats { grid-template-columns: 1fr 1fr; }
-      .legend { gap: 10px 14px; font-size: 12px; }
+      main { padding: 18px 14px calc(32px + env(safe-area-inset-bottom, 0px)); }
+      h1 { font-size: 1.4rem; }
+      .lede { font-size: 0.95rem; }
+      .legend { gap: 10px 14px; }
       .tabs {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        gap: 6px;
+        gap: 0;
         position: sticky;
         top: 0;
         z-index: 5;
         background: var(--bg);
-        padding: 8px 0;
-        margin: 8px 0 10px;
+        padding: 0;
+        margin: 0.6rem 0 0.85rem;
       }
-      .tab { width: 100%; text-align: center; padding: 12px 6px; font-size: 14px; min-height: 44px; }
-      .scroll { overflow: visible; border: 0; background: transparent; }
+      .tab { width: 100%; text-align: center; padding: 12px 4px; font-size: 0.82rem; min-height: 44px; }
+      .scroll { overflow: visible; }
       table { min-width: 0; width: 100%; }
       thead { display: none; }
       tbody tr {
         display: block;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         border: 1px solid var(--line);
-        border-radius: 12px;
-        overflow: hidden;
-        background: var(--card);
+        background: var(--bg);
       }
       tbody td {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: 12px;
-        padding: 9px 12px 9px 18px;
+        padding: 9px 12px 9px 14px;
         border-bottom: 1px solid var(--line);
-        font-size: 14px;
+        font-size: 0.95rem;
         white-space: normal;
         overflow-wrap: anywhere;
+        background: transparent;
       }
       tbody td:last-child { border-bottom: 0; }
       tbody td::before {
         content: attr(data-label);
         flex: 0 0 86px;
         color: var(--muted);
-        font-size: 12px;
-        font-weight: 650;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
         line-height: 1.35;
       }
       tbody td[data-label=""] { display: block; padding: 0; }
       tbody td[data-label=""]::before { display: none; }
       td.pic { width: auto; }
-      td.pic .thumb { width: 100%; height: 168px; border-radius: 0; }
+      td.pic .thumb { width: 100%; height: 168px; }
       td.num { text-align: left; white-space: nowrap; justify-content: space-between; }
       tbody td[data-label="Ask $"],
       tbody td[data-label="Offer $"],
@@ -155,23 +239,19 @@
       #map {
         height: min(70dvh, 560px);
         min-height: 420px;
-        border-radius: 12px;
       }
       .popup { min-width: 0; max-width: 240px; }
       .popup img { height: 96px; }
       .leaflet-popup-content { margin: 10px 12px; }
-      .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; }
+      .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; border-radius: 0 !important; }
     }
   </style>
 </head>
-<body>
+<body class="james">
   <main>
     <h1>Locked, awaiting, map</h1>
 
-    <div class="stats">
-      <div class="stat"><b>7</b><span>Locked</span></div>
-      <div class="stat"><b>29</b><span>Awaiting a time</span></div>
-    </div>
+    <p class="counts"><b>7</b> locked<span class="sep">·</span><b>29</b> awaiting a time</p>
     <div class="legend">
       <span><i class="gold"></i>Gold — actually good</span>
       <span><i class="silver"></i>Silver — take it</span>
@@ -191,17 +271,17 @@
         <table>
           <thead>
             <tr>
-              <th></th><th>Who</th><th>When</th><th>Ask $</th><th>Offer $</th><th>Cap $</th><th>Address</th><th>Move-in</th><th>Link</th>
+              <th></th><th>Address</th><th>When</th><th>Ask $</th><th>Offer $</th><th>Cap $</th><th>Who</th><th>Move-in</th><th>Link</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg"></a></td><td class="who">You</td><td>Mon 21 · 12:30–12:45</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>3/3-9 Lucknow Pl, West Perth · 2/2/1 tired 2000s, fridge, 1 basement</td><td>25 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td></tr>
-            <tr class="tone-gold"><td class="pic"><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg"></a></td><td class="who">You</td><td>Mon 21 · 3:45–4:05</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td>59 Reserve St, Wembley · 2-bed house by the park, extra living, ~3 cars</td><td>30 Sep</td><td><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">REIWA</a></td></tr>
-            <tr class="tone-gold"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg"></a></td><td class="who">You</td><td>Mon 21 · 4:30–4:45</td><td class="num">$795</td><td class="num">$795</td><td class="num">$810</td><td>2/175 Melville Pde, Como · 3/2 river villa, garage + front bay, freeway</td><td>30 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td></tr>
-            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg"></a></td><td class="who">Person B</td><td>Mon 21 · 4:45–5:00</td><td class="num">$700</td><td class="num">$700</td><td class="num">$700</td><td>20/18 Bridges Rd, Melville · 3/1/1, pergola, 1 garage + street</td><td>30 Sep</td><td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td></tr>
-            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg"></a></td><td class="who">You</td><td>Tue 22 · 1:30–1:45</td><td class="num">$785</td><td class="num">$785</td><td class="num">$785</td><td>36/5 Delhi St, West Perth · 2/2 apartment, 1 secure bay, fridge/washer/dryer</td><td>30 Sep</td><td><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">REIWA</a></td></tr>
-            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg"></a></td><td class="who">Either</td><td>Tue 22 · 4:30–4:45</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td>132 Loftus St, North Perth · 3-bed + sunroom, remote double garage</td><td>30 Sep</td><td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td></tr>
-            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg"></a></td><td class="who">Person B</td><td>Thu 24 · 4:00–4:15. Booked.</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>48/15-19 Carr St, West Perth · 2/2, 1 carport, pool/gym. Date is the problem.</td><td>15 Oct</td><td><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg"></a></td><td>3/3-9 Lucknow Pl, West Perth · 2/2/1 tired 2000s, fridge, 1 basement</td><td>Mon 21 · 12:30–12:45</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td class="who">You</td><td>25 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td></tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg"></a></td><td>59 Reserve St, Wembley · 2-bed house by the park, extra living, ~3 cars</td><td>Mon 21 · 3:45–4:05</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td class="who">You</td><td>30 Sep</td><td><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">REIWA</a></td></tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg"></a></td><td>2/175 Melville Pde, Como · 3/2 river villa, garage + front bay, freeway</td><td>Mon 21 · 4:30–4:45</td><td class="num">$795</td><td class="num">$795</td><td class="num">$810</td><td class="who">You</td><td>30 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg"></a></td><td>20/18 Bridges Rd, Melville · 3/1/1, pergola, 1 garage + street</td><td>Mon 21 · 4:45–5:00</td><td class="num">$700</td><td class="num">$700</td><td class="num">$700</td><td class="who">Person B</td><td>30 Sep</td><td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg"></a></td><td>36/5 Delhi St, West Perth · 2/2 apartment, 1 secure bay, fridge/washer/dryer</td><td>Tue 22 · 1:30–1:45</td><td class="num">$785</td><td class="num">$785</td><td class="num">$785</td><td class="who">You</td><td>30 Sep</td><td><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg"></a></td><td>132 Loftus St, North Perth · 3-bed + sunroom, remote double garage</td><td>Tue 22 · 4:30–4:45</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td class="who">Either</td><td>30 Sep</td><td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg"></a></td><td>48/15-19 Carr St, West Perth · 2/2, 1 carport, pool/gym. Date is the problem.</td><td>Thu 24 · 4:00–4:15. Booked.</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td class="who">Person B</td><td>15 Oct</td><td><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">REIWA</a></td></tr>
           </tbody>
         </table>
       </div>
