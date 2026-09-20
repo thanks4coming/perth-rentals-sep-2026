@@ -53,10 +53,19 @@
     .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
     .panel { display: none; }
     .panel.active { display: block; }
-    .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
-    table { border-collapse: collapse; width: 100%; min-width: 1040px; }
+    .scroll { overflow: visible; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+    table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 960px; }
     th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13px; }
-    th { position: sticky; top: 0; background: #faf9f6; font-size: 12px; color: var(--muted); font-weight: 650; }
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background: #faf9f6;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      box-shadow: inset 0 -1px 0 var(--line);
+    }
     tr:nth-child(even) td { background: #faf9f6; }
     td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
     td.pic { width: 86px; padding: 8px 10px; }
@@ -137,7 +146,10 @@
       tbody td[data-label=""]::before { display: none; }
       td.pic { width: auto; }
       td.pic .thumb { width: 100%; height: 168px; border-radius: 0; }
-      td.num { text-align: left; white-space: normal; justify-content: space-between; }
+      td.num { text-align: left; white-space: nowrap; justify-content: space-between; }
+      tbody td[data-label="Ask $"],
+      tbody td[data-label="Offer $"],
+      tbody td[data-label="Cap $"] { white-space: nowrap; }
       a { min-height: 44px; display: inline-flex; align-items: center; }
       td.pic a { min-height: 0; display: block; }
       #map {
@@ -179,94 +191,17 @@
         <table>
           <thead>
             <tr>
-              <th></th><th>Who</th><th>When</th><th>Address</th><th>Ask</th><th>Value</th><th>Offer</th><th>Bid</th><th>Move-in</th><th>Link</th>
+              <th></th><th>Who</th><th>When</th><th>Address</th><th>Ask $</th><th>Offer $</th><th>Cap $</th><th>Move-in</th><th>Link</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 12:30–12:45</td>
-              <td>3/3-9 Lucknow Pl, West Perth · 2/2/1 tired 2000s, fridge, 1 basement</td>
-              <td class="num">$750</td>
-              <td>Fair vs West Perth $745</td>
-              <td class="num">$750</td>
-              <td>Don't over</td>
-              <td>25 Sep</td>
-              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td>
-            </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 3:45–4:05</td>
-              <td>59 Reserve St, Wembley · 2-bed house by the park, extra living, ~3 cars</td>
-              <td class="num">$800</td>
-              <td>Cheap vs Wembley house $950</td>
-              <td class="num">$800. $820 if you want it</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">REIWA</a></td>
-            </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 4:30–4:45</td>
-              <td>2/175 Melville Pde, Como · 3/2 river villa, garage + front bay, freeway</td>
-              <td class="num">$795</td>
-              <td>Cheap vs Como 3-bed $850</td>
-              <td class="num">$795. $810 if both bays are yours</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg"></a></td>
-              <td class="who">Person B</td>
-              <td>Mon 21 · 4:45–5:00</td>
-              <td>20/18 Bridges Rd, Melville · 3/1/1, pergola, 1 garage + street</td>
-              <td class="num">$700</td>
-              <td>Cheap vs Melville $865 / low $740</td>
-              <td class="num">$700</td>
-              <td>Don't over</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Tue 22 · 1:30–1:45</td>
-              <td>36/5 Delhi St, West Perth · 2/2 apartment, 1 secure bay, fridge/washer/dryer</td>
-              <td class="num">$785</td>
-              <td>Dear vs West Perth $745</td>
-              <td class="num">$785</td>
-              <td>Don't over</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg"></a></td>
-              <td class="who">Either</td>
-              <td>Tue 22 · 4:30–4:45</td>
-              <td>132 Loftus St, North Perth · 3-bed + sunroom, remote double garage</td>
-              <td class="num">$800</td>
-              <td>Fair-dear vs North Perth $775</td>
-              <td class="num">$800. $820 if you want it</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg"></a></td>
-              <td class="who">Person B</td>
-              <td>Thu 24 · 4:00–4:15. Booked.</td>
-              <td>48/15-19 Carr St, West Perth · 2/2, 1 carport, pool/gym. Date is the problem.</td>
-              <td class="num">$750</td>
-              <td>Fair vs West Perth $745</td>
-              <td class="num">$750</td>
-              <td>Don't over</td>
-              <td>15 Oct</td>
-              <td><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">REIWA</a></td>
-            </tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg"></a></td><td class="who">You</td><td>Mon 21 · 12:30–12:45</td><td>3/3-9 Lucknow Pl, West Perth · 2/2/1 tired 2000s, fridge, 1 basement</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>25 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td></tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg"></a></td><td class="who">You</td><td>Mon 21 · 3:45–4:05</td><td>59 Reserve St, Wembley · 2-bed house by the park, extra living, ~3 cars</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td>30 Sep</td><td><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">REIWA</a></td></tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg"></a></td><td class="who">You</td><td>Mon 21 · 4:30–4:45</td><td>2/175 Melville Pde, Como · 3/2 river villa, garage + front bay, freeway</td><td class="num">$795</td><td class="num">$795</td><td class="num">$810</td><td>30 Sep</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg"></a></td><td class="who">Person B</td><td>Mon 21 · 4:45–5:00</td><td>20/18 Bridges Rd, Melville · 3/1/1, pergola, 1 garage + street</td><td class="num">$700</td><td class="num">$700</td><td class="num">$700</td><td>30 Sep</td><td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg"></a></td><td class="who">You</td><td>Tue 22 · 1:30–1:45</td><td>36/5 Delhi St, West Perth · 2/2 apartment, 1 secure bay, fridge/washer/dryer</td><td class="num">$785</td><td class="num">$785</td><td class="num">$785</td><td>30 Sep</td><td><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg"></a></td><td class="who">Either</td><td>Tue 22 · 4:30–4:45</td><td>132 Loftus St, North Perth · 3-bed + sunroom, remote double garage</td><td class="num">$800</td><td class="num">$800</td><td class="num">$820</td><td>30 Sep</td><td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg"></a></td><td class="who">Person B</td><td>Thu 24 · 4:00–4:15. Booked.</td><td>48/15-19 Carr St, West Perth · 2/2, 1 carport, pool/gym. Date is the problem.</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>15 Oct</td><td><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">REIWA</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -277,227 +212,39 @@
         <table>
           <thead>
             <tr>
-              <th></th><th>Address</th><th>Ask</th><th>Value</th><th>Offer</th><th>Bid</th><th>Photos</th><th>Move-in</th><th>Inspect</th><th>Link</th>
+              <th></th><th>Address</th><th>Ask $</th><th>Offer $</th><th>Cap $</th><th>Photos</th><th>Move-in</th><th>Inspect</th><th>Link</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg"></a></td>
-              <td>18B Jean St, Beaconsfield · 3/1, tandem + yard</td>
-              <td class="num">$800</td><td>Cheap vs Beaconsfield $890</td><td class="num">$800</td><td>Don't over</td>
-              <td>Best leftover interiors. Fresh 70s, oak-look floors, staged living is actually clean.</td>
-              <td>25 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered. REIWA now Mon 21 4:45–5:00 — clashes Bridges. IRE still $650 vs REIWA $800.</td>
-              <td><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/">REIWA</a></td>
-            </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg"></a></td>
-              <td>2/3 Thelma St, Como · 3/1, 3rd bed as office, 1 bay + street</td>
-              <td class="num">$750</td><td>Cheap vs Como 3-bed $850</td><td class="num">$750</td><td>Don't over</td>
-              <td>Kitchen is a real reno — white cabinets, wood bench, dishwasher. Open living. One bath.</td>
-              <td>2 Oct</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td>
-              <td><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/"><img class="thumb" alt="" src="https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg"></a></td>
-              <td>3/144 Bagot Rd, Subiaco · 2/1/1, two courtyards. Walk to Rokeby.</td>
-              <td class="num">$750</td><td>Fair for Subiaco 2-bed ~$780</td><td class="num">$720–$750</td><td>Don't over</td>
-              <td>This is the Subi one that is actually useful. One bay is the catch, not the suburb.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Central Estate contact form submitted.</td>
-              <td><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/">Central Estate</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647"><img class="thumb" alt="" src="https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg"></a></td>
-              <td>2/8 Kanimbla St, Bicton · 3/1, 2-car garage, patio</td>
-              <td class="num">$860</td><td>A bit dear vs Bicton $815</td><td class="num">$830–$860</td><td>Don't over</td>
-              <td>Paint, new carpets, gas kitchen, new garage door. One bath. New tonight.</td>
-              <td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg"></a></td>
-              <td>2/37 Birdwood Circus West, Bicton · 2/1, drive-through to 3 cars</td>
-              <td class="num">$775</td><td>Fair vs Bicton $815. Two-bed.</td><td class="num">$775</td><td>Don't over</td>
-              <td>Staged living looks new. Kitchen is still mint-green 90s laminate. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg"></a></td>
-              <td>1/147 Melville Pde, Como · 2/2 + upstairs living, 4 cars</td>
-              <td class="num">$850</td><td>Fair-dear vs Como $862</td><td class="num">$850</td><td>Don't over</td>
-              <td>Fresh paint, new timber floors, kitchen in progress in one shot. Four cars is the package.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/">Semra 0433 329 376</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg"></a></td>
-              <td>1/127 Robert St, Como · 3/1, two carports, river</td>
-              <td class="num">$700</td><td>Cheap vs Como 3-bed $850</td><td class="num">$700</td><td>Don't over</td>
-              <td>Kitchen is tidy, older villa. Two carports. Bridges-class leftover.</td>
-              <td>24 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg"></a></td>
-              <td>12/15 Rosalind Way, Coolbellup · 2/1 + 3rd room/office + nook, 2 tandem</td>
-              <td class="num">$650</td><td>Cheap vs Coolbellup $740</td><td class="num">$650</td><td>Don't over</td>
-              <td>New floorboards, white living, extra room. Further out. Two cars.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg"></a></td>
-              <td>105A Ardross St, Applecross · 3/2/2 house. Looked at.</td>
-              <td class="num">$825</td><td>Cheap vs Applecross house</td><td class="num">$800–$825</td><td>Don't over</td>
-              <td>You looked. TenantApp still $825. Kitchen is dated 90s brick/tile. House, not a unit.</td>
-              <td>21 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176"></a></td>
-              <td>4/21 Earlston Pl, Booragoon · 3/2 + study, 1 garage</td>
-              <td class="num">$850</td><td>Fair vs Booragoon 3-bed $830</td><td class="num">$850</td><td>Don't over</td>
-              <td>Renovated villa, real study. One garage only.</td>
-              <td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg"></a></td>
-              <td>44A Warragoon Cr, Attadale · 3/1, 2 cars</td>
-              <td class="num">$700</td><td>Fair</td><td class="num">$700</td><td>Don't over</td>
-              <td>Ordinary living shot. Package is the two cars and the 3-bed. In by 30 Sep.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td>
-              <td><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg"></a></td>
-              <td>22c/49 Herdsman Pde, Wembley · 2/1/1, lake, pets</td>
-              <td class="num">$630</td><td>Cheap vs Wembley $950</td><td class="num">$630</td><td>Don't over</td>
-              <td>Cheap, but 2-bed and one undercover bay. Bedroom looks onto another block.</td>
-              <td>23 Sep</td><td>—</td><td><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg"></a></td>
-              <td>302a/48-50 Outram St, West Perth · 2/2, 109 m², fridge</td>
-              <td class="num">$820</td><td>Dear vs West Perth $745</td><td class="num">$770–$800</td><td>Slight under</td>
-              <td>White kitchen, timber floors, fridge in. Lift out ~8 weeks — stairs.</td>
-              <td>25 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Mon 21 4:40–4:50 published but clashes Melville/Bridges — asked for another time, not locked.</td>
-              <td><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg"></a></td>
-              <td>53/170 Adelaide Tce, East Perth · 2/1 + study nook, 1 bay</td>
-              <td class="num">$695</td><td>Cheap vs East Perth $780</td><td class="num">$680–$695</td><td>Don't over</td>
-              <td>Staged living looks fine. Study is a desk in the living, not a closed room.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/52d-axford-street-como-5058044/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg"></a></td>
-              <td>52D Axford St, Como · 2/1 villa, pets, courtyard. No study.</td>
-              <td class="num">$800</td><td>Fair vs Como $862</td><td class="num">$780–$800</td><td>Don't over</td>
-              <td>Clean staged living, timber floors, timber front door. Two-bed only.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/52d-axford-street-como-5058044/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg"></a></td>
-              <td>37B Bristol Ave, Bicton · 2/1, 1 garage. Lounge is not a study.</td>
-              <td class="num">$660</td><td>Cheap for the finish</td><td class="num">$660</td><td>Don't over</td>
-              <td>Best 2-bed interiors on the leftover list — new floors, arches. One car.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Turner confirmed to Kayla Scriven. No times listed.</td>
-              <td><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg"></a></td>
-              <td>6/18 Avonmore Tce, Cottesloe · 2/1 walk-up, 1 bay + street</td>
-              <td class="num">$725</td><td>Cheap vs Cottesloe $1,350. Dear for a dated unit.</td><td class="num">$700–$725</td><td>Don't over</td>
-              <td>Location is the asset. 1960s walk-up. No living/kitchen shot on the listing set.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/"><img class="thumb" alt="" src="https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg"></a></td>
-              <td>6/287 Canning Hwy, Como · 3/1, garage + bay. 6-MONTH LEASE.</td>
-              <td class="num">$600</td><td>Cheap vs Como. Lease is the catch.</td><td class="num">$600</td><td>Don't over</td>
-              <td>Only if you accept 6 months. Rear townhouse. Two cars.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/">Semra 08 9217 2000</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg"></a></td>
-              <td>12A Gwelup St, Karrinyup · 3/2/2 house. 6-MONTH LEASE.</td>
-              <td class="num">$800</td><td>Cheap vs Karrinyup $1,000. Condition is 90s.</td><td class="num">$780</td><td>Don't over</td>
-              <td>Peach walls, laminate, old breakfast bar. Double garage. Only if 6 months is OK.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg"></a></td>
-              <td>2/447 Canning Hwy, Como · 2/1 + sunroom study</td>
-              <td class="num">$620</td><td>Cheap. Kitchen is the reason.</td><td class="num">$600–$620</td><td>Don't over</td>
-              <td>Galley kitchen is tired. Sunroom is the study.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg"></a></td>
-              <td>1/286 Mill Point Rd, South Perth · furnished 2/1, 1 garage</td>
-              <td class="num">$765</td><td>Dear if you do not want the furniture</td><td class="num">$765 only if furnished</td><td>Don't over</td>
-              <td>Fine living, no study. Skip unless the furniture is the point.</td>
-              <td>29 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Mon 21 4:15–4:30 published but clashes Reserve→Melville / Bridges — asked for another time, not locked.</td>
-              <td><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg"></a></td>
-              <td>225 Marmion St, Palmyra · 3/1, 4 cars, yard</td>
-              <td class="num">$850</td><td>Dear vs Palmyra ~$775–$800</td><td class="num">$820</td><td>Slight under</td>
-              <td>Four cars and a yard are the package. One bath. TenantApp still $850.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839">TenantApp</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg"></a></td>
-              <td>4/420 Barker Rd, Subiaco · 2-bed, 57 m², 1 bay</td>
-              <td class="num">$750</td><td>Dear per metre</td><td class="num">$700–$730</td><td>Don't chase</td>
-              <td>Same money as Bagot for 57 m². Suburb is Subi; the unit is a small 2-bed. Don't chase.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg"></a></td>
-              <td>1/27 Kitchener Rd, Melville · 3/1, carport + 2 open bays</td>
-              <td class="num">$670</td><td>Cheap if the 2016 photos are still true</td><td class="num">$650</td><td>Don't over</td>
-              <td>Listing photos are dated 1 Dec 2016. Vertical blinds, old carpet, bare bulb.</td>
-              <td>25 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/">Fon 0406 752 948</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg"></a></td>
-              <td>3/59 Robert St, Como · 2/1, yard, pets. No third room.</td>
-              <td class="num">$640</td><td>Cheap. Missing the third room.</td><td class="num">$640</td><td>Don't over</td>
-              <td>Being painted. Big yard. Do not treat the lounge as a study.</td>
-              <td>28 Sep</td><td>—</td><td><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg"></a></td>
-              <td>10A Waverley Rd, Coolbellup · brand-new 2/1, 1 garage + courtyard</td>
-              <td class="num">$750</td><td>Dear vs Rosalind $650 with 2 cars</td><td class="num">$750</td><td>Don't over</td>
-              <td>Actually new kitchen. One car. Two beds only. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg"></a></td>
-              <td>9/27 Point Walter Rd, Bicton · 2/1 villa, lock-up double garage</td>
-              <td class="num">$695</td><td>Cheap vs Bicton $815. Kitchen has sat since July.</td><td class="num">$695</td><td>Don't over</td>
-              <td>Empty, dated floral-tile kitchen, laminate floors. Two cars. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg"></a></td>
-              <td>3/30 Preston St, Como · 2/1 ground floor, 2 allocated bays</td>
-              <td class="num">$620</td><td>Cheap vs Como $862. Combined bathroom/laundry.</td><td class="num">$620</td><td>Don't over</td>
-              <td>Two bays. Two-bed only. Avail is the 5 Oct line. New tonight.</td>
-              <td>5 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641">TenantApp</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg"></a></td>
-              <td>1/121 Stock Rd, Attadale · 3/1 villa, 1 carport</td>
-              <td class="num">$750</td><td>Warragoon is $700 with two cars</td><td class="num">$700–$750</td><td>Don't chase</td>
-              <td>Tired brick villa on Stock Road. One car. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/">REIWA</a></td>
-            </tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg"></a></td><td>18B Jean St, Beaconsfield · 3/1, tandem + yard</td><td class="num">$800</td><td class="num">$800</td><td class="num">$800</td><td>Best leftover interiors. Fresh 70s, oak-look floors, staged living is actually clean.</td><td>25 Sep</td><td>Inspection requested · Fiona/James Dent. IRE registered. REIWA now Mon 21 4:45–5:00 — clashes Bridges. IRE still $650 vs REIWA $800.</td><td><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/">REIWA</a></td></tr>
+            <tr class="tone-gold"><td class="pic"><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg"></a></td><td>2/3 Thelma St, Como · 3/1, 3rd bed as office, 1 bay + street</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>Kitchen is a real reno — white cabinets, wood bench, dishwasher. Open living. One bath.</td><td>2 Oct</td><td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td><td><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/"><img class="thumb" alt="" src="https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg"></a></td><td>3/144 Bagot Rd, Subiaco · 2/1/1, two courtyards. Walk to Rokeby.</td><td class="num">$750</td><td class="num">$720</td><td class="num">$750</td><td>This is the Subi one that is actually useful. One bay is the catch, not the suburb.</td><td>30 Sep</td><td>Inspection requested · Fiona/James Dent. Central Estate contact form submitted.</td><td><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/">Central Estate</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647"><img class="thumb" alt="" src="https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg"></a></td><td>2/8 Kanimbla St, Bicton · 3/1, 2-car garage, patio</td><td class="num">$860</td><td class="num">$830</td><td class="num">$860</td><td>Paint, new carpets, gas kitchen, new garage door. One bath. New tonight.</td><td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647">TenantApp</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg"></a></td><td>2/37 Birdwood Circus West, Bicton · 2/1, drive-through to 3 cars</td><td class="num">$775</td><td class="num">$775</td><td class="num">$775</td><td>Staged living looks new. Kitchen is still mint-green 90s laminate. New tonight.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg"></a></td><td>1/147 Melville Pde, Como · 2/2 + upstairs living, 4 cars</td><td class="num">$850</td><td class="num">$850</td><td class="num">$850</td><td>Fresh paint, new timber floors, kitchen in progress in one shot. Four cars is the package.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/">Semra 0433 329 376</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg"></a></td><td>1/127 Robert St, Como · 3/1, two carports, river</td><td class="num">$700</td><td class="num">$700</td><td class="num">$700</td><td>Kitchen is tidy, older villa. Two carports. Bridges-class leftover.</td><td>24 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg"></a></td><td>12/15 Rosalind Way, Coolbellup · 2/1 + 3rd room/office + nook, 2 tandem</td><td class="num">$650</td><td class="num">$650</td><td class="num">$650</td><td>New floorboards, white living, extra room. Further out. Two cars.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/">REIWA</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg"></a></td><td>105A Ardross St, Applecross · 3/2/2 house. Looked at.</td><td class="num">$825</td><td class="num">$800</td><td class="num">$825</td><td>You looked. TenantApp still $825. Kitchen is dated 90s brick/tile. House, not a unit.</td><td>21 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183">TenantApp</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176"></a></td><td>4/21 Earlston Pl, Booragoon · 3/2 + study, 1 garage</td><td class="num">$850</td><td class="num">$850</td><td class="num">$850</td><td>Renovated villa, real study. One garage only.</td><td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436">TenantApp</a></td></tr>
+            <tr class="tone-silver"><td class="pic"><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg"></a></td><td>44A Warragoon Cr, Attadale · 3/1, 2 cars</td><td class="num">$700</td><td class="num">$700</td><td class="num">$700</td><td>Ordinary living shot. Package is the two cars and the 3-bed. In by 30 Sep.</td><td>30 Sep</td><td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td><td><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg"></a></td><td>22c/49 Herdsman Pde, Wembley · 2/1/1, lake, pets</td><td class="num">$630</td><td class="num">$630</td><td class="num">$630</td><td>Cheap, but 2-bed and one undercover bay. Bedroom looks onto another block.</td><td>23 Sep</td><td>—</td><td><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg"></a></td><td>302a/48-50 Outram St, West Perth · 2/2, 109 m², fridge</td><td class="num">$820</td><td class="num">$770</td><td class="num">$800</td><td>White kitchen, timber floors, fridge in. Lift out ~8 weeks — stairs.</td><td>25 Sep</td><td>Inspection requested · Fiona/James Dent. Mon 21 4:40–4:50 published but clashes Melville/Bridges — asked for another time, not locked.</td><td><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg"></a></td><td>53/170 Adelaide Tce, East Perth · 2/1 + study nook, 1 bay</td><td class="num">$695</td><td class="num">$680</td><td class="num">$695</td><td>Staged living looks fine. Study is a desk in the living, not a closed room.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/52d-axford-street-como-5058044/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg"></a></td><td>52D Axford St, Como · 2/1 villa, pets, courtyard. No study.</td><td class="num">$800</td><td class="num">$780</td><td class="num">$800</td><td>Clean staged living, timber floors, timber front door. Two-bed only.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/52d-axford-street-como-5058044/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg"></a></td><td>37B Bristol Ave, Bicton · 2/1, 1 garage. Lounge is not a study.</td><td class="num">$660</td><td class="num">$660</td><td class="num">$660</td><td>Best 2-bed interiors on the leftover list — new floors, arches. One car.</td><td>30 Sep</td><td>Inspection requested · Fiona/James Dent. Turner confirmed to Kayla Scriven. No times listed.</td><td><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg"></a></td><td>6/18 Avonmore Tce, Cottesloe · 2/1 walk-up, 1 bay + street</td><td class="num">$725</td><td class="num">$700</td><td class="num">$725</td><td>Location is the asset. 1960s walk-up. No living/kitchen shot on the listing set.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/"><img class="thumb" alt="" src="https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg"></a></td><td>6/287 Canning Hwy, Como · 3/1, garage + bay. 6-MONTH LEASE.</td><td class="num">$600</td><td class="num">$600</td><td class="num">$600</td><td>Only if you accept 6 months. Rear townhouse. Two cars.</td><td>30 Sep</td><td>—</td><td><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/">Semra 08 9217 2000</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg"></a></td><td>12A Gwelup St, Karrinyup · 3/2/2 house. 6-MONTH LEASE.</td><td class="num">$800</td><td class="num">$780</td><td class="num">$780</td><td>Peach walls, laminate, old breakfast bar. Double garage. Only if 6 months is OK.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg"></a></td><td>2/447 Canning Hwy, Como · 2/1 + sunroom study</td><td class="num">$620</td><td class="num">$600</td><td class="num">$620</td><td>Galley kitchen is tired. Sunroom is the study.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg"></a></td><td>1/286 Mill Point Rd, South Perth · furnished 2/1, 1 garage</td><td class="num">$765</td><td class="num">$765</td><td class="num">$765</td><td>Fine living, no study. Skip unless the furniture is the point.</td><td>29 Sep</td><td>Inspection requested · Fiona/James Dent. Mon 21 4:15–4:30 published but clashes Reserve→Melville / Bridges — asked for another time, not locked.</td><td><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg"></a></td><td>225 Marmion St, Palmyra · 3/1, 4 cars, yard</td><td class="num">$850</td><td class="num">$820</td><td class="num">$820</td><td>Four cars and a yard are the package. One bath. TenantApp still $850.</td><td>30 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839">TenantApp</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg"></a></td><td>4/420 Barker Rd, Subiaco · 2-bed, 57 m², 1 bay</td><td class="num">$750</td><td class="num">$700</td><td class="num">$730</td><td>Same money as Bagot for 57 m². Suburb is Subi; the unit is a small 2-bed. Don't chase.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg"></a></td><td>1/27 Kitchener Rd, Melville · 3/1, carport + 2 open bays</td><td class="num">$670</td><td class="num">$650</td><td class="num">$650</td><td>Listing photos are dated 1 Dec 2016. Vertical blinds, old carpet, bare bulb.</td><td>25 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/">Fon 0406 752 948</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg"></a></td><td>3/59 Robert St, Como · 2/1, yard, pets. No third room.</td><td class="num">$640</td><td class="num">$640</td><td class="num">$640</td><td>Being painted. Big yard. Do not treat the lounge as a study.</td><td>28 Sep</td><td>—</td><td><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg"></a></td><td>10A Waverley Rd, Coolbellup · brand-new 2/1, 1 garage + courtyard</td><td class="num">$750</td><td class="num">$750</td><td class="num">$750</td><td>Actually new kitchen. One car. Two beds only. New tonight.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg"></a></td><td>9/27 Point Walter Rd, Bicton · 2/1 villa, lock-up double garage</td><td class="num">$695</td><td class="num">$695</td><td class="num">$695</td><td>Empty, dated floral-tile kitchen, laminate floors. Two cars. New tonight.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/">REIWA</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg"></a></td><td>3/30 Preston St, Como · 2/1 ground floor, 2 allocated bays</td><td class="num">$620</td><td class="num">$620</td><td class="num">$620</td><td>Two bays. Two-bed only. Avail is the 5 Oct line. New tonight.</td><td>5 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641">TenantApp</a></td></tr>
+            <tr class="tone-bronze"><td class="pic"><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg"></a></td><td>1/121 Stock Rd, Attadale · 3/1 villa, 1 carport</td><td class="num">$750</td><td class="num">$700</td><td class="num">$750</td><td>Tired brick villa on Stock Road. One car. New tonight.</td><td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/">REIWA</a></td></tr>
           </tbody>
         </table>
       </div>
@@ -519,42 +266,42 @@
     let map, mapReady = false;
 
     const pins = [
-      { tier: "silver", name: "Lucknow", lat: -31.9451221, lng: 115.8410341, ask: "$750", offer: "$750", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/2022471", thumb: "https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg", address: "3/3-9 Lucknow Pl, West Perth" },
-      { tier: "gold", name: "Reserve", lat: -31.9375199, lng: 115.8065819, ask: "$800", offer: "$800 / $820", bid: "Slight over OK", href: "https://reiwa.com.au/59-reserve-street-wembley-5057912/", thumb: "https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg", address: "59 Reserve St, Wembley" },
-      { tier: "gold", name: "Melville Pde", lat: -31.9917677, lng: 115.8553138, ask: "$795", offer: "$795 / $810", bid: "Slight over OK", href: "https://www.tenantapp.com.au/Rentals/ViewListing/5639860", thumb: "https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg", address: "2/175 Melville Pde, Como" },
-      { tier: "silver", name: "Bridges", lat: -32.0348445, lng: 115.7984331, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/20-18-bridges-road-melville-5055205/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg", address: "20/18 Bridges Rd, Melville" },
-      { tier: "silver", name: "Delhi", lat: -31.9462366, lng: 115.8466007, ask: "$785", offer: "$785", bid: "Don't over", href: "https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/", thumb: "https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg", address: "36/5 Delhi St, West Perth" },
-      { tier: "silver", name: "Loftus", lat: -31.9338487, lng: 115.8462841, ask: "$800", offer: "$800 / $820", bid: "Slight over OK", href: "https://reiwa.com.au/132-loftus-street-north-perth-5060984/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg", address: "132 Loftus St, North Perth" },
-      { tier: "bronze", name: "Carr", lat: -31.9391852, lng: 115.8504578, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/", thumb: "https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg", address: "48/15-19 Carr St, West Perth" },
-      { tier: "gold", name: "Jean", lat: -32.0745769, lng: 115.7721493, ask: "$800", offer: "$800", bid: "Don't over", href: "https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg", address: "18B Jean St, Beaconsfield" },
-      { tier: "gold", name: "Thelma", lat: -31.996319, lng: 115.8633304, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/2-3-thelma-street-como-5059884/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg", address: "2/3 Thelma St, Como" },
-      { tier: "silver", name: "Bagot", lat: -31.9501628, lng: 115.8274833, ask: "$750", offer: "$720–$750", bid: "Don't over", href: "https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/", thumb: "https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg", address: "3/144 Bagot Rd, Subiaco" },
-      { tier: "silver", name: "1/147 Melville", lat: -31.99235, lng: 115.85485, ask: "$850", offer: "$850", bid: "Don't over", href: "https://reiwa.com.au/1-147-melville-parade-como-5038592/", thumb: "https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg", address: "1/147 Melville Pde, Como" },
-      { tier: "silver", name: "1/127 Robert", lat: -32.0111599, lng: 115.8578526, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/1-127-robert-street-como-5060939/", thumb: "https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg", address: "1/127 Robert St, Como" },
-      { tier: "silver", name: "Rosalind", lat: -32.0844175, lng: 115.8100808, ask: "$650", offer: "$650", bid: "Don't over", href: "https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg", address: "12/15 Rosalind Way, Coolbellup" },
-      { tier: "silver", name: "Ardross", lat: -32.0141173, lng: 115.8372961, ask: "$825", offer: "$800–$825", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3965183", thumb: "https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg", address: "105A Ardross St, Applecross" },
-      { tier: "silver", name: "Earlston", lat: -32.0446351, lng: 115.8330758, ask: "$850", offer: "$850", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6205436", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176", address: "4/21 Earlston Pl, Booragoon" },
-      { tier: "silver", name: "Warragoon", lat: -32.0257517, lng: 115.8103502, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/", thumb: "https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg", address: "44A Warragoon Cr, Attadale" },
-      { tier: "bronze", name: "Herdsman", lat: -31.9288025, lng: 115.8147734, ask: "$630", offer: "$630", bid: "Don't over", href: "https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/", thumb: "https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg", address: "22c/49 Herdsman Pde, Wembley" },
-      { tier: "bronze", name: "Outram", lat: -31.948737, lng: 115.83992, ask: "$820", offer: "$770–$800", bid: "Slight under", href: "https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/", thumb: "https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg", address: "302a/48-50 Outram St, West Perth" },
-      { tier: "bronze", name: "Adelaide", lat: -31.959116, lng: 115.8710129, ask: "$695", offer: "$680–$695", bid: "Don't over", href: "https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg", address: "53/170 Adelaide Tce, East Perth" },
-      { tier: "bronze", name: "Axford", lat: -31.9974041, lng: 115.8679615, ask: "$800", offer: "$780–$800", bid: "Don't over", href: "https://reiwa.com.au/52d-axford-street-como-5058044/", thumb: "https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg", address: "52D Axford St, Como" },
-      { tier: "bronze", name: "Bristol", lat: -32.0306554, lng: 115.782437, ask: "$660", offer: "$660", bid: "Don't over", href: "https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/", thumb: "https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg", address: "37B Bristol Ave, Bicton" },
-      { tier: "bronze", name: "Avonmore", lat: -32.0044867, lng: 115.7543061, ask: "$725", offer: "$700–$725", bid: "Don't over", href: "https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/", thumb: "https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg", address: "6/18 Avonmore Tce, Cottesloe" },
-      { tier: "bronze", name: "6/287 Canning", lat: -32.0016145, lng: 115.8614819, ask: "$600", offer: "$600", bid: "Don't over", href: "https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/", thumb: "https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg", address: "6/287 Canning Hwy, Como" },
-      { tier: "bronze", name: "Gwelup", lat: -31.877145, lng: 115.7842419, ask: "$800", offer: "$780", bid: "Don't over", href: "https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/", thumb: "https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg", address: "12A Gwelup St, Karrinyup" },
-      { tier: "bronze", name: "2/447 Canning", lat: -32.00215, lng: 115.86235, ask: "$620", offer: "$600–$620", bid: "Don't over", href: "https://reiwa.com.au/2-447-canning-highway-como-5057777/", thumb: "https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg", address: "2/447 Canning Hwy, Como" },
-      { tier: "bronze", name: "Mill Point", lat: -31.9773533, lng: 115.8709898, ask: "$765", offer: "$765 furnished", bid: "Don't over", href: "https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/", thumb: "https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg", address: "1/286 Mill Point Rd, South Perth" },
-      { tier: "bronze", name: "Marmion", lat: -32.0469635, lng: 115.7866167, ask: "$850", offer: "$820", bid: "Slight under", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6198839", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg", address: "225 Marmion St, Palmyra" },
-      { tier: "bronze", name: "Barker", lat: -31.9484782, lng: 115.8200614, ask: "$750", offer: "$700–$730", bid: "Don't chase", href: "https://reiwa.com.au/4-420-barker-road-subiaco-5059363/", thumb: "https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg", address: "4/420 Barker Rd, Subiaco" },
-      { tier: "bronze", name: "Kitchener", lat: -32.0364776, lng: 115.7981848, ask: "$670", offer: "$650", bid: "Don't over", href: "https://reiwa.com.au/1-27-kitchener-road-melville-5058775/", thumb: "https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg", address: "1/27 Kitchener Rd, Melville" },
-      { tier: "bronze", name: "3/59 Robert", lat: -32.01165, lng: 115.8584, ask: "$640", offer: "$640", bid: "Don't over", href: "https://reiwa.com.au/3-59-robert-street-como-5056144/", thumb: "https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg", address: "3/59 Robert St, Como" },
-      { tier: "silver", name: "Kanimbla", lat: -32.0341807, lng: 115.7885382, ask: "$860", offer: "$830–$860", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6220647", thumb: "https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg", address: "2/8 Kanimbla St, Bicton" },
-      { tier: "silver", name: "Birdwood", lat: -32.0359178, lng: 115.7783701, ask: "$775", offer: "$775", bid: "Don't over", href: "https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/", thumb: "https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg", address: "2/37 Birdwood Circus West, Bicton" },
-      { tier: "bronze", name: "Waverley", lat: -32.080287, lng: 115.807881, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/", thumb: "https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg", address: "10A Waverley Rd, Coolbellup" },
-      { tier: "bronze", name: "Point Walter", lat: -32.0298119, lng: 115.7845382, ask: "$695", offer: "$695", bid: "Don't over", href: "https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/", thumb: "https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg", address: "9/27 Point Walter Rd, Bicton" },
-      { tier: "bronze", name: "3/30 Preston", lat: -31.9942973, lng: 115.8654637, ask: "$620", offer: "$620", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3918641", thumb: "https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg", address: "3/30 Preston St, Como" },
-      { tier: "bronze", name: "Stock Rd", lat: -32.0318391, lng: 115.7935573, ask: "$750", offer: "$700–$750", bid: "Don't chase", href: "https://reiwa.com.au/1-121-stock-road-attadale-5057823/", thumb: "https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg", address: "1/121 Stock Rd, Attadale" }
+      { tier: "silver", name: "Lucknow", lat: -31.9451221, lng: 115.8410341, ask: "$750", offer: "$750", cap: "$750", href: "https://www.tenantapp.com.au/Rentals/ViewListing/2022471", thumb: "https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg", address: "3/3-9 Lucknow Pl, West Perth" },
+      { tier: "gold", name: "Reserve", lat: -31.9375199, lng: 115.8065819, ask: "$800", offer: "$800", cap: "$820", href: "https://reiwa.com.au/59-reserve-street-wembley-5057912/", thumb: "https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg", address: "59 Reserve St, Wembley" },
+      { tier: "gold", name: "Melville Pde", lat: -31.9917677, lng: 115.8553138, ask: "$795", offer: "$795", cap: "$810", href: "https://www.tenantapp.com.au/Rentals/ViewListing/5639860", thumb: "https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg", address: "2/175 Melville Pde, Como" },
+      { tier: "silver", name: "Bridges", lat: -32.0348445, lng: 115.7984331, ask: "$700", offer: "$700", cap: "$700", href: "https://reiwa.com.au/20-18-bridges-road-melville-5055205/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg", address: "20/18 Bridges Rd, Melville" },
+      { tier: "silver", name: "Delhi", lat: -31.9462366, lng: 115.8466007, ask: "$785", offer: "$785", cap: "$785", href: "https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/", thumb: "https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg", address: "36/5 Delhi St, West Perth" },
+      { tier: "silver", name: "Loftus", lat: -31.9338487, lng: 115.8462841, ask: "$800", offer: "$800", cap: "$820", href: "https://reiwa.com.au/132-loftus-street-north-perth-5060984/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg", address: "132 Loftus St, North Perth" },
+      { tier: "bronze", name: "Carr", lat: -31.9391852, lng: 115.8504578, ask: "$750", offer: "$750", cap: "$750", href: "https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/", thumb: "https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg", address: "48/15-19 Carr St, West Perth" },
+      { tier: "gold", name: "Jean", lat: -32.0745769, lng: 115.7721493, ask: "$800", offer: "$800", cap: "$800", href: "https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg", address: "18B Jean St, Beaconsfield" },
+      { tier: "gold", name: "Thelma", lat: -31.996319, lng: 115.8633304, ask: "$750", offer: "$750", cap: "$750", href: "https://reiwa.com.au/2-3-thelma-street-como-5059884/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg", address: "2/3 Thelma St, Como" },
+      { tier: "silver", name: "Bagot", lat: -31.9501628, lng: 115.8274833, ask: "$750", offer: "$720", cap: "$750", href: "https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/", thumb: "https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg", address: "3/144 Bagot Rd, Subiaco" },
+      { tier: "silver", name: "1/147 Melville", lat: -31.99235, lng: 115.85485, ask: "$850", offer: "$850", cap: "$850", href: "https://reiwa.com.au/1-147-melville-parade-como-5038592/", thumb: "https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg", address: "1/147 Melville Pde, Como" },
+      { tier: "silver", name: "1/127 Robert", lat: -32.0111599, lng: 115.8578526, ask: "$700", offer: "$700", cap: "$700", href: "https://reiwa.com.au/1-127-robert-street-como-5060939/", thumb: "https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg", address: "1/127 Robert St, Como" },
+      { tier: "silver", name: "Rosalind", lat: -32.0844175, lng: 115.8100808, ask: "$650", offer: "$650", cap: "$650", href: "https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg", address: "12/15 Rosalind Way, Coolbellup" },
+      { tier: "silver", name: "Ardross", lat: -32.0141173, lng: 115.8372961, ask: "$825", offer: "$800", cap: "$825", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3965183", thumb: "https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg", address: "105A Ardross St, Applecross" },
+      { tier: "silver", name: "Earlston", lat: -32.0446351, lng: 115.8330758, ask: "$850", offer: "$850", cap: "$850", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6205436", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176", address: "4/21 Earlston Pl, Booragoon" },
+      { tier: "silver", name: "Warragoon", lat: -32.0257517, lng: 115.8103502, ask: "$700", offer: "$700", cap: "$700", href: "https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/", thumb: "https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg", address: "44A Warragoon Cr, Attadale" },
+      { tier: "bronze", name: "Herdsman", lat: -31.9288025, lng: 115.8147734, ask: "$630", offer: "$630", cap: "$630", href: "https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/", thumb: "https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg", address: "22c/49 Herdsman Pde, Wembley" },
+      { tier: "bronze", name: "Outram", lat: -31.948737, lng: 115.83992, ask: "$820", offer: "$770", cap: "$800", href: "https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/", thumb: "https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg", address: "302a/48-50 Outram St, West Perth" },
+      { tier: "bronze", name: "Adelaide", lat: -31.959116, lng: 115.8710129, ask: "$695", offer: "$680", cap: "$695", href: "https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg", address: "53/170 Adelaide Tce, East Perth" },
+      { tier: "bronze", name: "Axford", lat: -31.9974041, lng: 115.8679615, ask: "$800", offer: "$780", cap: "$800", href: "https://reiwa.com.au/52d-axford-street-como-5058044/", thumb: "https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg", address: "52D Axford St, Como" },
+      { tier: "bronze", name: "Bristol", lat: -32.0306554, lng: 115.782437, ask: "$660", offer: "$660", cap: "$660", href: "https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/", thumb: "https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg", address: "37B Bristol Ave, Bicton" },
+      { tier: "bronze", name: "Avonmore", lat: -32.0044867, lng: 115.7543061, ask: "$725", offer: "$700", cap: "$725", href: "https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/", thumb: "https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg", address: "6/18 Avonmore Tce, Cottesloe" },
+      { tier: "bronze", name: "6/287 Canning", lat: -32.0016145, lng: 115.8614819, ask: "$600", offer: "$600", cap: "$600", href: "https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/", thumb: "https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg", address: "6/287 Canning Hwy, Como" },
+      { tier: "bronze", name: "Gwelup", lat: -31.877145, lng: 115.7842419, ask: "$800", offer: "$780", cap: "$780", href: "https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/", thumb: "https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg", address: "12A Gwelup St, Karrinyup" },
+      { tier: "bronze", name: "2/447 Canning", lat: -32.00215, lng: 115.86235, ask: "$620", offer: "$600", cap: "$620", href: "https://reiwa.com.au/2-447-canning-highway-como-5057777/", thumb: "https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg", address: "2/447 Canning Hwy, Como" },
+      { tier: "bronze", name: "Mill Point", lat: -31.9773533, lng: 115.8709898, ask: "$765", offer: "$765", cap: "$765", href: "https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/", thumb: "https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg", address: "1/286 Mill Point Rd, South Perth" },
+      { tier: "bronze", name: "Marmion", lat: -32.0469635, lng: 115.7866167, ask: "$850", offer: "$820", cap: "$820", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6198839", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg", address: "225 Marmion St, Palmyra" },
+      { tier: "bronze", name: "Barker", lat: -31.9484782, lng: 115.8200614, ask: "$750", offer: "$700", cap: "$730", href: "https://reiwa.com.au/4-420-barker-road-subiaco-5059363/", thumb: "https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg", address: "4/420 Barker Rd, Subiaco" },
+      { tier: "bronze", name: "Kitchener", lat: -32.0364776, lng: 115.7981848, ask: "$670", offer: "$650", cap: "$650", href: "https://reiwa.com.au/1-27-kitchener-road-melville-5058775/", thumb: "https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg", address: "1/27 Kitchener Rd, Melville" },
+      { tier: "bronze", name: "3/59 Robert", lat: -32.01165, lng: 115.8584, ask: "$640", offer: "$640", cap: "$640", href: "https://reiwa.com.au/3-59-robert-street-como-5056144/", thumb: "https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg", address: "3/59 Robert St, Como" },
+      { tier: "silver", name: "Kanimbla", lat: -32.0341807, lng: 115.7885382, ask: "$860", offer: "$830", cap: "$860", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6220647", thumb: "https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg", address: "2/8 Kanimbla St, Bicton" },
+      { tier: "silver", name: "Birdwood", lat: -32.0359178, lng: 115.7783701, ask: "$775", offer: "$775", cap: "$775", href: "https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/", thumb: "https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg", address: "2/37 Birdwood Circus West, Bicton" },
+      { tier: "bronze", name: "Waverley", lat: -32.080287, lng: 115.807881, ask: "$750", offer: "$750", cap: "$750", href: "https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/", thumb: "https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg", address: "10A Waverley Rd, Coolbellup" },
+      { tier: "bronze", name: "Point Walter", lat: -32.0298119, lng: 115.7845382, ask: "$695", offer: "$695", cap: "$695", href: "https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/", thumb: "https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg", address: "9/27 Point Walter Rd, Bicton" },
+      { tier: "bronze", name: "3/30 Preston", lat: -31.9942973, lng: 115.8654637, ask: "$620", offer: "$620", cap: "$620", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3918641", thumb: "https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg", address: "3/30 Preston St, Como" },
+      { tier: "bronze", name: "Stock Rd", lat: -32.0318391, lng: 115.7935573, ask: "$750", offer: "$700", cap: "$750", href: "https://reiwa.com.au/1-121-stock-road-attadale-5057823/", thumb: "https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg", address: "1/121 Stock Rd, Attadale" }
     ];
 
     const colours = { gold: "#ffcc00", silver: "#b8c4d4", bronze: "#a85214" };
@@ -586,7 +333,7 @@
         const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, bookedOrLooked.has(p.name)), title: p.address });
         marker.bindPopup(
           '<div class="popup"><a href="' + p.href + '"><img alt="" src="' + p.thumb + '"></a><b>' + p.address + '</b>' +
-          '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · ' + p.bid + '</div>' +
+          '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · cap ' + p.cap + '</div>' +
           '<a href="' + p.href + '">Listing</a></div>',
           { maxWidth: popupWidth, autoPanPadding: [28, 28] }
         );
