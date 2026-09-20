@@ -80,7 +80,76 @@
     .popup b { display: block; margin-bottom: 4px; }
     .popup .meta { color: #5c5a55; font-size: 12px; }
     footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
-    @media (max-width: 720px) { .stats { grid-template-columns: 1fr; } #map { height: 480px; } }
+    html { -webkit-text-size-adjust: 100%; }
+    .scroll { -webkit-overflow-scrolling: touch; }
+    .tab { touch-action: manipulation; min-height: 40px; }
+    .leaflet-container { font: inherit; }
+    @media (max-width: 720px) {
+      main { padding: 16px 12px calc(32px + env(safe-area-inset-bottom, 0px)); }
+      h1 { font-size: 22px; }
+      .lede { font-size: 14px; margin-bottom: 14px; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .legend { gap: 10px 14px; font-size: 12px; }
+      .tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: var(--bg);
+        padding: 8px 0;
+        margin: 8px 0 10px;
+      }
+      .tab { width: 100%; text-align: center; padding: 12px 6px; font-size: 14px; min-height: 44px; }
+      .scroll { overflow: visible; border: 0; background: transparent; }
+      table { min-width: 0; width: 100%; }
+      thead { display: none; }
+      tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--card);
+      }
+      tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 9px 12px 9px 18px;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+      tbody td:last-child { border-bottom: 0; }
+      tbody td::before {
+        content: attr(data-label);
+        flex: 0 0 86px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+        line-height: 1.35;
+      }
+      tbody td[data-label=""] { display: block; padding: 0; }
+      tbody td[data-label=""]::before { display: none; }
+      td.pic { width: auto; }
+      td.pic .thumb { width: 100%; height: 168px; border-radius: 0; }
+      td.num { text-align: left; white-space: normal; justify-content: space-between; }
+      a { min-height: 44px; display: inline-flex; align-items: center; }
+      td.pic a { min-height: 0; display: block; }
+      #map {
+        height: min(70dvh, 560px);
+        min-height: 420px;
+        border-radius: 12px;
+      }
+      .popup { min-width: 0; max-width: 240px; }
+      .popup img { height: 96px; }
+      .leaflet-popup-content { margin: 10px 12px; }
+      .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; }
+    }
   </style>
 </head>
 <body>
@@ -450,8 +519,9 @@
     function pinIcon(tier, seen) {
       const fill = colours[tier];
       const ring = seen ? "#5dcc86" : "#ef6d68";
-      const html = '<div style="width:24px;height:24px;border-radius:50%;background:' + fill + ';border:4px solid ' + ring + ';box-sizing:border-box"></div>';
-      return L.divIcon({ className: "", html: html, iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -13] });
+      const size = window.matchMedia("(max-width: 720px)").matches ? 28 : 24;
+      const html = '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + fill + ';border:4px solid ' + ring + ';box-sizing:border-box"></div>';
+      return L.divIcon({ className: "", html: html, iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -(size / 2 + 1)] });
     }
 
     function initMap() {
@@ -459,17 +529,19 @@
         map.invalidateSize();
         return;
       }
-      map = L.map("map");
+      map = L.map("map", { tapTolerance: 20 });
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap"
       }).addTo(map);
       const group = L.featureGroup();
+      const popupWidth = window.matchMedia("(max-width: 720px)").matches ? 240 : 280;
       pins.forEach(function (p) {
         const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, bookedOrLooked.has(p.name)), title: p.address });
         marker.bindPopup(
           '<div class="popup"><a href="' + p.href + '"><img alt="" src="' + p.thumb + '"></a><b>' + p.address + '</b>' +
           '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · ' + p.bid + '</div>' +
-          '<a href="' + p.href + '">Listing</a></div>'
+          '<a href="' + p.href + '">Listing</a></div>',
+          { maxWidth: popupWidth, autoPanPadding: [28, 28] }
         );
         marker.addTo(group);
       });
@@ -478,16 +550,39 @@
       mapReady = true;
     }
 
+    document.querySelectorAll("table").forEach(function (table) {
+      const headers = Array.prototype.map.call(table.querySelectorAll("thead th"), function (th) {
+        return th.textContent.trim();
+      });
+      table.querySelectorAll("tbody tr").forEach(function (tr) {
+        Array.prototype.forEach.call(tr.children, function (td, i) {
+          td.setAttribute("data-label", headers[i] || "");
+        });
+      });
+    });
+
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         tabs.forEach(function (t) { t.setAttribute("aria-selected", String(t === tab)); });
         Object.keys(panels).forEach(function (id) {
           document.getElementById(panels[id]).classList.toggle("active", id === tab.id);
         });
+        if (window.matchMedia("(max-width: 720px)").matches) {
+          document.querySelector(".tabs").scrollIntoView({ block: "start" });
+        }
         if (tab.id === "tab-map") {
-          requestAnimationFrame(initMap);
+          requestAnimationFrame(function () {
+            requestAnimationFrame(initMap);
+          });
         }
       });
+    });
+
+    window.addEventListener("resize", function () {
+      if (mapReady && map) map.invalidateSize();
+    });
+    window.addEventListener("orientationchange", function () {
+      setTimeout(function () { if (mapReady && map) map.invalidateSize(); }, 250);
     });
   </script>
 </body>
