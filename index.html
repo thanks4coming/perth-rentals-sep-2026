@@ -3,572 +3,507 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Locked, awaiting, map</title>
+  <title>Inspect Reserve and 2/175 Melville Parade on Monday. Do not chase Barker.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
-      --bg: #f6f5f2;
-      --ink: #1c1b19;
-      --muted: #5c5a55;
-      --faint: #7a7873;
-      --line: #e4e1da;
-      --card: #fff;
-      --gold: #ffcc00;
-      --silver: #b8c4d4;
-      --bronze: #ff8a2a;
-      --ring-booked: #5dcc86;
-      --ring-open: #ef6d68;
-      --info: #1f4f7a;
+      --james-paper: #faf8f3;
+      --james-ink: #121314;
+      --james-muted: #5a5d59;
+      --james-rule: #c8cbc6;
+      --james-seal: #7a211e;
+      --james-sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --james-mono: "IBM Plex Mono", ui-monospace, monospace;
     }
     * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
       margin: 0;
-      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--ink);
-      background: var(--bg);
+      font-family: var(--james-sans);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--james-ink);
+      background: var(--james-paper);
     }
-    main { max-width: 1280px; margin: 0 auto; padding: 24px 16px 64px; }
-    h1 { font-size: 24px; font-weight: 650; margin: 0 0 8px; letter-spacing: -0.02em; }
-    h2 { font-size: 16px; font-weight: 650; margin: 28px 0 8px; }
-    .lede { color: var(--muted); margin: 0 0 20px; }
-    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 8px; }
-    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-    .stat b { display: block; font-size: 22px; font-weight: 650; }
-    .stat span { color: var(--muted); font-size: 12px; }
-    .legend { display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 13px; margin: 12px 0 4px; }
-    .legend i {
-      display: inline-block; width: 12px; height: 12px; border-radius: 50%;
-      margin-right: 6px; vertical-align: -1px;
+    main { max-width: 80rem; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      margin: 0 0 1rem;
+      max-width: 40rem;
     }
-    .legend .gold { background: var(--gold); }
-    .legend .silver { background: var(--silver); }
-    .legend .bronze { background: var(--bronze); }
-    .legend .ring-booked { background: transparent; box-shadow: inset 0 0 0 3px var(--ring-booked); }
-    .legend .ring-open { background: transparent; box-shadow: inset 0 0 0 3px var(--ring-open); }
-    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 12px; }
-    .tab {
-      border: 1px solid var(--line); background: var(--card); color: var(--ink);
-      border-radius: 999px; padding: 8px 14px; font: inherit; cursor: pointer;
+    .brief {
+      max-width: 66ch;
+      margin: 0 0 1.5rem;
+      padding: 0;
     }
-    .tab[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .panel { display: none; }
-    .panel.active { display: block; }
-    .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
-    table { border-collapse: collapse; width: 100%; min-width: 1040px; }
-    th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 13px; }
-    th { position: sticky; top: 0; background: #faf9f6; font-size: 12px; color: var(--muted); font-weight: 650; }
-    tr:nth-child(even) td { background: #faf9f6; }
-    td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-    td.pic { width: 66px; padding: 8px 10px; }
-    td.pic a { display: block; line-height: 0; }
-    .thumb {
-      width: 50px; height: 50px; object-fit: cover; border-radius: 4px;
-      display: block; background: #eceae4;
+    .brief p { margin: 0 0 0.55rem; }
+    .brief p:last-child { margin-bottom: 0; }
+    .after {
+      max-width: 66ch;
+      margin: 1rem 0 0;
     }
-    .who { white-space: nowrap; font-weight: 650; }
-    a { color: var(--info); }
-    .source { color: var(--faint); font-size: 12px; margin-top: 8px; }
-    tr.tone-gold td { background: #fff4b0 !important; }
-    tr.tone-silver td { background: #e8eef6 !important; }
-    tr.tone-bronze td { background: #ffe4cc !important; }
-    .tone-gold td:first-child { box-shadow: inset 8px 0 0 var(--gold); }
-    .tone-silver td:first-child { box-shadow: inset 8px 0 0 var(--silver); }
-    .tone-bronze td:first-child { box-shadow: inset 8px 0 0 var(--bronze); }
-    #map { height: 640px; width: 100%; border: 1px solid var(--line); border-radius: 10px; background: #e8e4dc; }
-    .popup { min-width: 200px; }
-    .popup img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px; }
-    .popup b { display: block; margin-bottom: 4px; }
-    .popup .meta { color: #5c5a55; font-size: 12px; }
-    footer { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--line); }
-    html { -webkit-text-size-adjust: 100%; }
-    .scroll { -webkit-overflow-scrolling: touch; }
-    .tab { touch-action: manipulation; min-height: 40px; }
+    .after p { margin: 0 0 0.55rem; }
+    h2, summary {
+      font-family: var(--james-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--james-muted);
+    }
+    h2 { margin: 2rem 0 0.6rem; }
+    .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { border-collapse: collapse; width: 100%; min-width: 58rem; }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.5rem 0.65rem 0.5rem 0;
+      font-size: 0.92rem;
+    }
+    th {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--james-muted);
+      border-bottom: 1px solid var(--james-ink);
+    }
+    td { border-bottom: 1px solid var(--james-rule); }
+    td.num, th.num { text-align: right; font-family: var(--james-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td.rank { font-family: var(--james-mono); width: 2.2rem; color: var(--james-muted); white-space: nowrap; }
+    td.date, td.owner { white-space: nowrap; }
+    td.call { font-weight: 600; }
+    a {
+      color: var(--james-seal);
+      text-underline-offset: 0.15em;
+    }
+    .place { font-weight: 600; }
+    .note { display: block; font-weight: 400; color: var(--james-muted); font-size: 0.82rem; margin-top: 0.15rem; }
+    details {
+      margin-top: 2rem;
+      border-top: 1px solid var(--james-ink);
+      padding-top: 0.75rem;
+    }
+    summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 0.2rem 0 0.6rem;
+    }
+    summary::-webkit-details-marker { display: none; }
+    #map {
+      height: 560px;
+      width: 100%;
+      border: 1px solid var(--james-rule);
+      background: #eeeae3;
+    }
+    .popup { font-family: var(--james-sans); font-size: 0.88rem; }
+    .popup b { display: block; margin-bottom: 0.25rem; }
+    .popup .meta { color: var(--james-muted); font-size: 0.8rem; }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--james-ink);
+    }
+    footer p {
+      max-width: 66ch;
+      color: var(--james-muted);
+      font-size: 0.88rem;
+      margin: 0;
+    }
     .leaflet-container { font: inherit; }
     @media (max-width: 720px) {
-      main { padding: 16px 12px calc(32px + env(safe-area-inset-bottom, 0px)); }
-      h1 { font-size: 22px; }
-      .lede { font-size: 14px; margin-bottom: 14px; }
-      .stats { grid-template-columns: 1fr 1fr; }
-      .legend { gap: 10px 14px; font-size: 12px; }
-      .tabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 6px;
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background: var(--bg);
-        padding: 8px 0;
-        margin: 8px 0 10px;
-      }
-      .tab { width: 100%; text-align: center; padding: 12px 6px; font-size: 14px; min-height: 44px; }
-      .scroll { overflow: visible; border: 0; background: transparent; }
-      table { min-width: 0; width: 100%; }
+      main { padding: 1.15rem 0.9rem calc(2rem + env(safe-area-inset-bottom, 0px)); }
+      h1 { font-size: 1.35rem; }
+      .scroll { overflow: visible; }
+      table { min-width: 0; }
       thead { display: none; }
-      tbody tr {
-        display: block;
-        margin-bottom: 12px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        overflow: hidden;
-        background: var(--card);
-      }
+      tbody tr { display: block; margin: 0 0 1.1rem; border-bottom: 1px solid var(--james-ink); padding-bottom: 0.35rem; }
       tbody td {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 9px 12px 9px 18px;
-        border-bottom: 1px solid var(--line);
-        font-size: 14px;
-        white-space: normal;
-        overflow-wrap: anywhere;
+        gap: 0.75rem;
+        padding: 0.35rem 0;
+        border-bottom: 1px solid var(--james-rule);
+        font-size: 0.95rem;
       }
       tbody td:last-child { border-bottom: 0; }
       tbody td::before {
         content: attr(data-label);
-        flex: 0 0 86px;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 650;
-        line-height: 1.35;
+        flex: 0 0 4.5rem;
+        color: var(--james-muted);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
-      tbody td[data-label=""] { display: block; padding: 0; }
-      tbody td[data-label=""]::before { display: none; }
-      td.pic { width: auto; }
-      td.pic .thumb { width: 100%; height: 168px; border-radius: 0; }
-      td.num { text-align: left; white-space: normal; justify-content: space-between; }
+      td.num { text-align: right; font-family: var(--james-mono); }
+      td.rank { color: var(--james-ink); }
       a { min-height: 44px; display: inline-flex; align-items: center; }
-      td.pic a { min-height: 0; display: block; }
-      #map {
-        height: min(70dvh, 560px);
-        min-height: 420px;
-        border-radius: 12px;
-      }
-      .popup { min-width: 0; max-width: 240px; }
-      .popup img { height: 96px; }
-      .leaflet-popup-content { margin: 10px 12px; }
-      .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; }
+      #map { height: min(70dvh, 520px); min-height: 380px; }
     }
   </style>
 </head>
-<body>
+<body class="james">
   <main>
-    <h1>Locked, awaiting, map</h1>
-    <p class="lede">Monday 21, Tuesday 22, and Thursday 24 Sep 2026. You: Lucknow → Reserve → Melville Parade, then Delhi Tuesday 1:30 and Loftus 4:30. Person B: Bridges Monday, Carr Thursday 4pm. Inspection requests tonight under Fiona/James Dent. Colours are quality. Gold you’d be glad you got. Silver is good enough before 5 Oct. Bronze is average or compromised. Bassendean is out.</p>
-
-    <div class="stats">
-      <div class="stat"><b>7</b><span>Locked</span></div>
-      <div class="stat"><b>29</b><span>Awaiting a time</span></div>
-    </div>
-    <div class="legend">
-      <span><i class="gold"></i>Gold — actually good</span>
-      <span><i class="silver"></i>Silver — take it</span>
-      <span><i class="bronze"></i>Bronze — average / a catch</span>
-      <span><i class="ring-booked"></i>Green ring — booked, requested, or already looked</span>
-      <span><i class="ring-open"></i>Red ring — no inspect booked or requested</span>
+    <h1>Inspect Reserve and 2/175 Melville Parade on Monday. Do not chase Barker.</h1>
+    <div class="brief">
+      <p>Window is Monday 21 to Thursday 24 September 2026. Need in by 5 October. Carr is 15 October.</p>
+      <p>You: Lucknow 12:30, Reserve 3:45, Melville Parade 4:30. Tuesday: Delhi 1:30, Loftus 4:30. Other: Bridges Monday 4:45, Carr Thursday 4:00 (booked).</p>
+      <p>Requests went out 20 September under Fiona/James Dent. Bid above ask only on Reserve, Melville Parade, and Loftus.</p>
     </div>
 
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-run" aria-selected="true" aria-controls="panel-run">Locked</button>
-      <button class="tab" role="tab" id="tab-wait" aria-selected="false" aria-controls="panel-wait">Awaiting a time</button>
-      <button class="tab" role="tab" id="tab-map" aria-selected="false" aria-controls="panel-map">Map</button>
+    <h2>Shortlist</h2>
+    <div class="scroll">
+      <table class="sheet">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Place</th>
+            <th class="num">Ask $</th>
+            <th class="num">Fair $</th>
+            <th class="num">Cap $</th>
+            <th>In by</th>
+            <th>Status</th>
+            <th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rank">1</td>
+            <td><a class="place" href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">59 Reserve St, Wembley</a><span class="note">2-bed house by the park. Extra living. ~3 cars.</span></td>
+            <td class="num">800</td>
+            <td class="num">950</td>
+            <td class="num">820</td>
+            <td class="date">30 Sep</td>
+            <td>Booked Mon 3:45–4:05</td>
+            <td class="owner">You</td>
+          </tr>
+          <tr>
+            <td class="rank">2</td>
+            <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">2/175 Melville Pde, Como</a><span class="note">3/2 river villa. Garage + front bay. Freeway.</span></td>
+            <td class="num">795</td>
+            <td class="num">850</td>
+            <td class="num">810</td>
+            <td>30 Sep</td>
+            <td>Booked Mon 4:30–4:45</td>
+            <td>You</td>
+          </tr>
+          <tr>
+            <td class="rank">3</td>
+            <td><a class="place" href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/">18B Jean St, Beaconsfield</a><span class="note">3/1, tandem + yard. IRE still 650 against REIWA 800.</span></td>
+            <td class="num">800</td>
+            <td class="num">890</td>
+            <td class="num">800</td>
+            <td>25 Sep</td>
+            <td>Requested. REIWA Mon 4:45 clashes Bridges.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">4</td>
+            <td><a class="place" href="https://reiwa.com.au/2-3-thelma-street-como-5059884/">2/3 Thelma St, Como</a><span class="note">3/1. Third bed as office. 1 bay + street.</span></td>
+            <td class="num">750</td>
+            <td class="num">850</td>
+            <td class="num">750</td>
+            <td>2 Oct</td>
+            <td>Requested. No time listed.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">5</td>
+            <td><a class="place" href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/">3/144 Bagot Rd, Subiaco</a><span class="note">2/1/1. Two courtyards. Walk to Rokeby. One bay is the catch.</span></td>
+            <td class="num">750</td>
+            <td class="num">780</td>
+            <td class="num">750</td>
+            <td>30 Sep</td>
+            <td>Requested. Central Estate form sent.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">6</td>
+            <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647">2/8 Kanimbla St, Bicton</a><span class="note">3/1. 2-car garage. Patio. Paint and new carpets. One bath.</span></td>
+            <td class="num">860</td>
+            <td class="num">815</td>
+            <td class="num">860</td>
+            <td>2 Oct</td>
+            <td>No time. Register TenantApp or call Jonathan 0433 355 005.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">7</td>
+            <td><a class="place" href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/">2/37 Birdwood Circus West, Bicton</a><span class="note">2/1. Drive-through to 3 cars. Kitchen is still mint-green 90s.</span></td>
+            <td class="num">775</td>
+            <td class="num">815</td>
+            <td class="num">775</td>
+            <td>30 Sep</td>
+            <td>No time. Loop wants a virtual inspect first. Robyn 0452 661 851.</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">8</td>
+            <td><a class="place" href="https://reiwa.com.au/1-127-robert-street-como-5060939/">1/127 Robert St, Como</a><span class="note">3/1. Two carports. Older villa.</span></td>
+            <td class="num">700</td>
+            <td class="num">850</td>
+            <td class="num">700</td>
+            <td>24 Sep</td>
+            <td>No time</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="rank">9</td>
+            <td><a class="place" href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">132 Loftus St, North Perth</a><span class="note">3-bed + sunroom. Remote double garage.</span></td>
+            <td class="num">800</td>
+            <td class="num">775</td>
+            <td class="num">820</td>
+            <td>30 Sep</td>
+            <td>Booked Tue 4:30–4:45</td>
+            <td>Either</td>
+          </tr>
+          <tr>
+            <td class="rank">10</td>
+            <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">3/3-9 Lucknow Pl, West Perth</a><span class="note">2/2/1 tired 2000s. Fridge. 1 basement.</span></td>
+            <td class="num">750</td>
+            <td class="num">745</td>
+            <td class="num">750</td>
+            <td>25 Sep</td>
+            <td>Booked Mon 12:30–12:45</td>
+            <td>You</td>
+          </tr>
+          <tr>
+            <td class="rank">11</td>
+            <td><a class="place" href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">20/18 Bridges Rd, Melville</a><span class="note">3/1/1. Pergola. 1 garage + street.</span></td>
+            <td class="num">700</td>
+            <td class="num">740–865</td>
+            <td class="num">700</td>
+            <td>30 Sep</td>
+            <td>Booked Mon 4:45–5:00</td>
+            <td>Other</td>
+          </tr>
+          <tr>
+            <td class="rank">12</td>
+            <td><a class="place" href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">36/5 Delhi St, West Perth</a><span class="note">2/2 apartment. 1 secure bay. Fridge, washer, dryer. Dear vs West Perth.</span></td>
+            <td class="num">785</td>
+            <td class="num">745</td>
+            <td class="num">785</td>
+            <td>30 Sep</td>
+            <td>Booked Tue 1:30–1:45</td>
+            <td>You</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="after">
+      <p>Monday route is Lucknow, then Reserve, then Melville Parade. The other person does Bridges at 4:45.</p>
+      <p>Out: Bassendean. Do not chase Barker or Stock Road. Six-month leases — 6/287 Canning Hwy and 12A Gwelup — only if a short term is acceptable.</p>
     </div>
 
-    <section class="panel active" id="panel-run" role="tabpanel">
+    <details>
+      <summary>Also live · 24</summary>
       <div class="scroll">
-        <table>
+        <table class="rest">
           <thead>
             <tr>
-              <th></th><th>Who</th><th>When</th><th>Address</th><th>Ask</th><th>Value</th><th>Offer</th><th>Bid</th><th>Move-in</th><th>Link</th>
+              <th>Place</th>
+              <th class="num">Ask $</th>
+              <th class="num">Fair $</th>
+              <th class="num">Cap $</th>
+              <th>In by</th>
+              <th>Status</th>
+              <th>Call</th>
             </tr>
           </thead>
           <tbody>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 12:30–12:45</td>
-              <td>3/3-9 Lucknow Pl, West Perth · 2/2/1 tired 2000s, fridge, 1 basement</td>
-              <td class="num">$750</td>
-              <td>Fair vs West Perth $745</td>
-              <td class="num">$750</td>
-              <td>Don't over</td>
-              <td>25 Sep</td>
-              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/2022471">TenantApp</a></td>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/1-147-melville-parade-como-5038592/">1/147 Melville Pde, Como</a><span class="note">2/2 + upstairs living. 4 cars. Semra 0433 329 376.</span></td>
+              <td class="num">850</td><td class="num">862</td><td class="num">850</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Backup</td>
             </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 3:45–4:05</td>
-              <td>59 Reserve St, Wembley · 2-bed house by the park, extra living, ~3 cars</td>
-              <td class="num">$800</td>
-              <td>Cheap vs Wembley house $950</td>
-              <td class="num">$800. $820 if you want it</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/59-reserve-street-wembley-5057912/">REIWA</a></td>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/">12/15 Rosalind Way, Coolbellup</a><span class="note">2/1 + office + nook. 2 tandem. Further out.</span></td>
+              <td class="num">650</td><td class="num">740</td><td class="num">650</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Backup</td>
             </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Mon 21 · 4:30–4:45</td>
-              <td>2/175 Melville Pde, Como · 3/2 river villa, garage + front bay, freeway</td>
-              <td class="num">$795</td>
-              <td>Cheap vs Como 3-bed $850</td>
-              <td class="num">$795. $810 if both bays are yours</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/5639860">TenantApp</a></td>
+            <tr>
+              <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183">105A Ardross St, Applecross</a><span class="note">3/2/2 house. You already looked. Kitchen is 90s.</span></td>
+              <td class="num">825</td><td class="num">—</td><td class="num">825</td>
+              <td>21 Sep</td><td>Looked</td><td class="call">Backup</td>
             </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg"></a></td>
-              <td class="who">Person B</td>
-              <td>Mon 21 · 4:45–5:00</td>
-              <td>20/18 Bridges Rd, Melville · 3/1/1, pergola, 1 garage + street</td>
-              <td class="num">$700</td>
-              <td>Cheap vs Melville $865 / low $740</td>
-              <td class="num">$700</td>
-              <td>Don't over</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/20-18-bridges-road-melville-5055205/">REIWA</a></td>
+            <tr>
+              <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436">4/21 Earlston Pl, Booragoon</a><span class="note">3/2 + study. 1 garage.</span></td>
+              <td class="num">850</td><td class="num">830</td><td class="num">850</td>
+              <td>2 Oct</td><td>No time</td><td class="call">Backup</td>
             </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg"></a></td>
-              <td class="who">You</td>
-              <td>Tue 22 · 1:30–1:45</td>
-              <td>36/5 Delhi St, West Perth · 2/2 apartment, 1 secure bay, fridge/washer/dryer</td>
-              <td class="num">$785</td>
-              <td>Dear vs West Perth $745</td>
-              <td class="num">$785</td>
-              <td>Don't over</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/">REIWA</a></td>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/">44A Warragoon Cr, Attadale</a><span class="note">3/1. 2 cars.</span></td>
+              <td class="num">700</td><td class="num">—</td><td class="num">700</td>
+              <td>30 Sep</td><td>Requested. No time listed.</td><td class="call">Backup</td>
             </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg"></a></td>
-              <td class="who">Either</td>
-              <td>Tue 22 · 4:30–4:45</td>
-              <td>132 Loftus St, North Perth · 3-bed + sunroom, remote double garage</td>
-              <td class="num">$800</td>
-              <td>Fair-dear vs North Perth $775</td>
-              <td class="num">$800. $820 if you want it</td>
-              <td>Slight over OK</td>
-              <td>30 Sep</td>
-              <td><a href="https://reiwa.com.au/132-loftus-street-north-perth-5060984/">REIWA</a></td>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">48/15-19 Carr St, West Perth</a><span class="note">2/2. 1 carport. Pool/gym. Date is the problem.</span></td>
+              <td class="num">750</td><td class="num">745</td><td class="num">750</td>
+              <td>15 Oct</td><td>Booked Thu 4:00–4:15</td><td class="call">Pass</td>
             </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg"></a></td>
-              <td class="who">Person B</td>
-              <td>Thu 24 · 4:00–4:15. Booked.</td>
-              <td>48/15-19 Carr St, West Perth · 2/2, 1 carport, pool/gym. Date is the problem.</td>
-              <td class="num">$750</td>
-              <td>Fair vs West Perth $745</td>
-              <td class="num">$750</td>
-              <td>Don't over</td>
-              <td>15 Oct</td>
-              <td><a href="https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/">REIWA</a></td>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/">22c/49 Herdsman Pde, Wembley</a><span class="note">2/1/1. Lake. Pets. Bedroom looks onto another block.</span></td>
+              <td class="num">630</td><td class="num">950</td><td class="num">630</td>
+              <td>23 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/">302a/48-50 Outram St, West Perth</a><span class="note">2/2. 109 m². Lift out ~8 weeks — stairs.</span></td>
+              <td class="num">820</td><td class="num">745</td><td class="num">800</td>
+              <td>25 Sep</td><td>Requested. Mon 4:40 clashes the run. Not locked.</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/">53/170 Adelaide Tce, East Perth</a><span class="note">2/1. Study is a desk in the living. 1 bay.</span></td>
+              <td class="num">695</td><td class="num">780</td><td class="num">695</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/52d-axford-street-como-5058044/">52D Axford St, Como</a><span class="note">2/1 villa. Pets. Courtyard. No study.</span></td>
+              <td class="num">800</td><td class="num">862</td><td class="num">800</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/">37B Bristol Ave, Bicton</a><span class="note">2/1. 1 garage. Lounge is not a study.</span></td>
+              <td class="num">660</td><td class="num">—</td><td class="num">660</td>
+              <td>30 Sep</td><td>Requested. Turner confirmed to Kayla Scriven. No time listed.</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/">6/18 Avonmore Tce, Cottesloe</a><span class="note">2/1 walk-up. 1960s. No living/kitchen shot on the listing.</span></td>
+              <td class="num">725</td><td class="num">1350</td><td class="num">725</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/">6/287 Canning Hwy, Como</a><span class="note">3/1. Garage + bay. Six-month lease. Semra 08 9217 2000.</span></td>
+              <td class="num">600</td><td class="num">—</td><td class="num">600</td>
+              <td>30 Sep</td><td>No time. Six-month lease.</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/">12A Gwelup St, Karrinyup</a><span class="note">3/2/2 house. 90s condition. Six-month lease.</span></td>
+              <td class="num">800</td><td class="num">1000</td><td class="num">780</td>
+              <td>30 Sep</td><td>No time. Six-month lease.</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/2-447-canning-highway-como-5057777/">2/447 Canning Hwy, Como</a><span class="note">2/1 + sunroom study. Galley kitchen is tired.</span></td>
+              <td class="num">620</td><td class="num">—</td><td class="num">620</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/">1/286 Mill Point Rd, South Perth</a><span class="note">Furnished 2/1. 1 garage. Skip unless the furniture is the point.</span></td>
+              <td class="num">765</td><td class="num">—</td><td class="num">765</td>
+              <td>29 Sep</td><td>Requested. Mon 4:15 clashes the run. Not locked.</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839">225 Marmion St, Palmyra</a><span class="note">3/1. 4 cars. Yard. One bath.</span></td>
+              <td class="num">850</td><td class="num">775–800</td><td class="num">820</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/">4/420 Barker Rd, Subiaco</a><span class="note">2-bed. 57 m². Same money as Bagot.</span></td>
+              <td class="num">750</td><td class="num">—</td><td class="num">730</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/">1/27 Kitchener Rd, Melville</a><span class="note">3/1. Photos dated 1 Dec 2016. Fon 0406 752 948.</span></td>
+              <td class="num">670</td><td class="num">—</td><td class="num">650</td>
+              <td>25 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/3-59-robert-street-como-5056144/">3/59 Robert St, Como</a><span class="note">2/1. Yard. Pets. No third room. Being painted.</span></td>
+              <td class="num">640</td><td class="num">—</td><td class="num">640</td>
+              <td>28 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/">10A Waverley Rd, Coolbellup</a><span class="note">New 2/1. 1 garage. Rosalind is 650 with two cars.</span></td>
+              <td class="num">750</td><td class="num">650</td><td class="num">750</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/">9/27 Point Walter Rd, Bicton</a><span class="note">2/1. Lock-up double garage. Kitchen has sat since July.</span></td>
+              <td class="num">695</td><td class="num">815</td><td class="num">695</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641">3/30 Preston St, Como</a><span class="note">2/1 ground floor. 2 bays. Combined bathroom/laundry.</span></td>
+              <td class="num">620</td><td class="num">862</td><td class="num">620</td>
+              <td>5 Oct</td><td>No time</td><td class="call">Pass</td>
+            </tr>
+            <tr>
+              <td><a class="place" href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/">1/121 Stock Rd, Attadale</a><span class="note">3/1. 1 carport. Warragoon is 700 with two cars.</span></td>
+              <td class="num">750</td><td class="num">700</td><td class="num">750</td>
+              <td>30 Sep</td><td>No time</td><td class="call">Pass</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
+    </details>
 
-    <section class="panel" id="panel-wait" role="tabpanel">
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr>
-              <th></th><th>Address</th><th>Ask</th><th>Value</th><th>Offer</th><th>Bid</th><th>Photos</th><th>Move-in</th><th>Inspect</th><th>Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg"></a></td>
-              <td>18B Jean St, Beaconsfield · 3/1, tandem + yard</td>
-              <td class="num">$800</td><td>Cheap vs Beaconsfield $890</td><td class="num">$800</td><td>Don't over</td>
-              <td>Best leftover interiors. Fresh 70s, oak-look floors, staged living is actually clean.</td>
-              <td>25 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered. REIWA now Mon 21 4:45–5:00 — clashes Bridges. IRE still $650 vs REIWA $800.</td>
-              <td><a href="https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/">REIWA</a></td>
-            </tr>
-            <tr class="tone-gold">
-              <td class="pic"><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg"></a></td>
-              <td>2/3 Thelma St, Como · 3/1, 3rd bed as office, 1 bay + street</td>
-              <td class="num">$750</td><td>Cheap vs Como 3-bed $850</td><td class="num">$750</td><td>Don't over</td>
-              <td>Kitchen is a real reno — white cabinets, wood bench, dishwasher. Open living. One bath.</td>
-              <td>2 Oct</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td>
-              <td><a href="https://reiwa.com.au/2-3-thelma-street-como-5059884/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/"><img class="thumb" alt="" src="https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg"></a></td>
-              <td>3/144 Bagot Rd, Subiaco · 2/1/1, two courtyards. Walk to Rokeby.</td>
-              <td class="num">$750</td><td>Fair for Subiaco 2-bed ~$780</td><td class="num">$720–$750</td><td>Don't over</td>
-              <td>This is the Subi one that is actually useful. One bay is the catch, not the suburb.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Central Estate contact form submitted.</td>
-              <td><a href="https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/">Central Estate</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647"><img class="thumb" alt="" src="https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg"></a></td>
-              <td>2/8 Kanimbla St, Bicton · 3/1, 2-car garage, patio</td>
-              <td class="num">$860</td><td>A bit dear vs Bicton $815</td><td class="num">$830–$860</td><td>Don't over</td>
-              <td>Paint, new carpets, gas kitchen, new garage door. One bath. New tonight.</td>
-              <td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6220647">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg"></a></td>
-              <td>2/37 Birdwood Circus West, Bicton · 2/1, drive-through to 3 cars</td>
-              <td class="num">$775</td><td>Fair vs Bicton $815. Two-bed.</td><td class="num">$775</td><td>Don't over</td>
-              <td>Staged living looks new. Kitchen is still mint-green 90s laminate. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg"></a></td>
-              <td>1/147 Melville Pde, Como · 2/2 + upstairs living, 4 cars</td>
-              <td class="num">$850</td><td>Fair-dear vs Como $862</td><td class="num">$850</td><td>Don't over</td>
-              <td>Fresh paint, new timber floors, kitchen in progress in one shot. Four cars is the package.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-147-melville-parade-como-5038592/">Semra 0433 329 376</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg"></a></td>
-              <td>1/127 Robert St, Como · 3/1, two carports, river</td>
-              <td class="num">$700</td><td>Cheap vs Como 3-bed $850</td><td class="num">$700</td><td>Don't over</td>
-              <td>Kitchen is tidy, older villa. Two carports. Bridges-class leftover.</td>
-              <td>24 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-127-robert-street-como-5060939/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg"></a></td>
-              <td>12/15 Rosalind Way, Coolbellup · 2/1 + 3rd room/office + nook, 2 tandem</td>
-              <td class="num">$650</td><td>Cheap vs Coolbellup $740</td><td class="num">$650</td><td>Don't over</td>
-              <td>New floorboards, white living, extra room. Further out. Two cars.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/">REIWA</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg"></a></td>
-              <td>105A Ardross St, Applecross · 3/2/2 house. Looked at.</td>
-              <td class="num">$825</td><td>Cheap vs Applecross house</td><td class="num">$800–$825</td><td>Don't over</td>
-              <td>You looked. TenantApp still $825. Kitchen is dated 90s brick/tile. House, not a unit.</td>
-              <td>21 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3965183">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176"></a></td>
-              <td>4/21 Earlston Pl, Booragoon · 3/2 + study, 1 garage</td>
-              <td class="num">$850</td><td>Fair vs Booragoon 3-bed $830</td><td class="num">$850</td><td>Don't over</td>
-              <td>Renovated villa, real study. One garage only.</td>
-              <td>2 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6205436">TenantApp</a></td>
-            </tr>
-            <tr class="tone-silver">
-              <td class="pic"><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg"></a></td>
-              <td>44A Warragoon Cr, Attadale · 3/1, 2 cars</td>
-              <td class="num">$700</td><td>Fair</td><td class="num">$700</td><td>Don't over</td>
-              <td>Ordinary living shot. Package is the two cars and the 3-bed. In by 30 Sep.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. IRE registered, no times.</td>
-              <td><a href="https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg"></a></td>
-              <td>22c/49 Herdsman Pde, Wembley · 2/1/1, lake, pets</td>
-              <td class="num">$630</td><td>Cheap vs Wembley $950</td><td class="num">$630</td><td>Don't over</td>
-              <td>Cheap, but 2-bed and one undercover bay. Bedroom looks onto another block.</td>
-              <td>23 Sep</td><td>—</td><td><a href="https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg"></a></td>
-              <td>302a/48-50 Outram St, West Perth · 2/2, 109 m², fridge</td>
-              <td class="num">$820</td><td>Dear vs West Perth $745</td><td class="num">$770–$800</td><td>Slight under</td>
-              <td>White kitchen, timber floors, fridge in. Lift out ~8 weeks — stairs.</td>
-              <td>25 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Mon 21 4:40–4:50 published but clashes Melville/Bridges — asked for another time, not locked.</td>
-              <td><a href="https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg"></a></td>
-              <td>53/170 Adelaide Tce, East Perth · 2/1 + study nook, 1 bay</td>
-              <td class="num">$695</td><td>Cheap vs East Perth $780</td><td class="num">$680–$695</td><td>Don't over</td>
-              <td>Staged living looks fine. Study is a desk in the living, not a closed room.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/52d-axford-street-como-5058044/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg"></a></td>
-              <td>52D Axford St, Como · 2/1 villa, pets, courtyard. No study.</td>
-              <td class="num">$800</td><td>Fair vs Como $862</td><td class="num">$780–$800</td><td>Don't over</td>
-              <td>Clean staged living, timber floors, timber front door. Two-bed only.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/52d-axford-street-como-5058044/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg"></a></td>
-              <td>37B Bristol Ave, Bicton · 2/1, 1 garage. Lounge is not a study.</td>
-              <td class="num">$660</td><td>Cheap for the finish</td><td class="num">$660</td><td>Don't over</td>
-              <td>Best 2-bed interiors on the leftover list — new floors, arches. One car.</td>
-              <td>30 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Turner confirmed to Kayla Scriven. No times listed.</td>
-              <td><a href="https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg"></a></td>
-              <td>6/18 Avonmore Tce, Cottesloe · 2/1 walk-up, 1 bay + street</td>
-              <td class="num">$725</td><td>Cheap vs Cottesloe $1,350. Dear for a dated unit.</td><td class="num">$700–$725</td><td>Don't over</td>
-              <td>Location is the asset. 1960s walk-up. No living/kitchen shot on the listing set.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/"><img class="thumb" alt="" src="https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg"></a></td>
-              <td>6/287 Canning Hwy, Como · 3/1, garage + bay. 6-MONTH LEASE.</td>
-              <td class="num">$600</td><td>Cheap vs Como. Lease is the catch.</td><td class="num">$600</td><td>Don't over</td>
-              <td>Only if you accept 6 months. Rear townhouse. Two cars.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/">Semra 08 9217 2000</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg"></a></td>
-              <td>12A Gwelup St, Karrinyup · 3/2/2 house. 6-MONTH LEASE.</td>
-              <td class="num">$800</td><td>Cheap vs Karrinyup $1,000. Condition is 90s.</td><td class="num">$780</td><td>Don't over</td>
-              <td>Peach walls, laminate, old breakfast bar. Double garage. Only if 6 months is OK.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg"></a></td>
-              <td>2/447 Canning Hwy, Como · 2/1 + sunroom study</td>
-              <td class="num">$620</td><td>Cheap. Kitchen is the reason.</td><td class="num">$600–$620</td><td>Don't over</td>
-              <td>Galley kitchen is tired. Sunroom is the study.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/2-447-canning-highway-como-5057777/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg"></a></td>
-              <td>1/286 Mill Point Rd, South Perth · furnished 2/1, 1 garage</td>
-              <td class="num">$765</td><td>Dear if you do not want the furniture</td><td class="num">$765 only if furnished</td><td>Don't over</td>
-              <td>Fine living, no study. Skip unless the furniture is the point.</td>
-              <td>29 Sep</td>
-              <td>Inspection requested · Fiona/James Dent. Mon 21 4:15–4:30 published but clashes Reserve→Melville / Bridges — asked for another time, not locked.</td>
-              <td><a href="https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg"></a></td>
-              <td>225 Marmion St, Palmyra · 3/1, 4 cars, yard</td>
-              <td class="num">$850</td><td>Dear vs Palmyra ~$775–$800</td><td class="num">$820</td><td>Slight under</td>
-              <td>Four cars and a yard are the package. One bath. TenantApp still $850.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/6198839">TenantApp</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg"></a></td>
-              <td>4/420 Barker Rd, Subiaco · 2-bed, 57 m², 1 bay</td>
-              <td class="num">$750</td><td>Dear per metre</td><td class="num">$700–$730</td><td>Don't chase</td>
-              <td>Same money as Bagot for 57 m². Suburb is Subi; the unit is a small 2-bed. Don't chase.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/4-420-barker-road-subiaco-5059363/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg"></a></td>
-              <td>1/27 Kitchener Rd, Melville · 3/1, carport + 2 open bays</td>
-              <td class="num">$670</td><td>Cheap if the 2016 photos are still true</td><td class="num">$650</td><td>Don't over</td>
-              <td>Listing photos are dated 1 Dec 2016. Vertical blinds, old carpet, bare bulb.</td>
-              <td>25 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-27-kitchener-road-melville-5058775/">Fon 0406 752 948</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg"></a></td>
-              <td>3/59 Robert St, Como · 2/1, yard, pets. No third room.</td>
-              <td class="num">$640</td><td>Cheap. Missing the third room.</td><td class="num">$640</td><td>Don't over</td>
-              <td>Being painted. Big yard. Do not treat the lounge as a study.</td>
-              <td>28 Sep</td><td>—</td><td><a href="https://reiwa.com.au/3-59-robert-street-como-5056144/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg"></a></td>
-              <td>10A Waverley Rd, Coolbellup · brand-new 2/1, 1 garage + courtyard</td>
-              <td class="num">$750</td><td>Dear vs Rosalind $650 with 2 cars</td><td class="num">$750</td><td>Don't over</td>
-              <td>Actually new kitchen. One car. Two beds only. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg"></a></td>
-              <td>9/27 Point Walter Rd, Bicton · 2/1 villa, lock-up double garage</td>
-              <td class="num">$695</td><td>Cheap vs Bicton $815. Kitchen has sat since July.</td><td class="num">$695</td><td>Don't over</td>
-              <td>Empty, dated floral-tile kitchen, laminate floors. Two cars. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/">REIWA</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641"><img class="thumb" alt="" src="https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg"></a></td>
-              <td>3/30 Preston St, Como · 2/1 ground floor, 2 allocated bays</td>
-              <td class="num">$620</td><td>Cheap vs Como $862. Combined bathroom/laundry.</td><td class="num">$620</td><td>Don't over</td>
-              <td>Two bays. Two-bed only. Avail is the 5 Oct line. New tonight.</td>
-              <td>5 Oct</td><td>—</td><td><a href="https://www.tenantapp.com.au/Rentals/ViewListing/3918641">TenantApp</a></td>
-            </tr>
-            <tr class="tone-bronze">
-              <td class="pic"><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/"><img class="thumb" alt="" src="https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg"></a></td>
-              <td>1/121 Stock Rd, Attadale · 3/1 villa, 1 carport</td>
-              <td class="num">$750</td><td>Warragoon is $700 with two cars</td><td class="num">$700–$750</td><td>Don't chase</td>
-              <td>Tired brick villa on Stock Road. One car. New tonight.</td>
-              <td>30 Sep</td><td>—</td><td><a href="https://reiwa.com.au/1-121-stock-road-attadale-5057823/">REIWA</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-map" role="tabpanel">
+    <details id="map-block" open>
+      <summary>Map</summary>
       <div id="map"></div>
-    </section>
+    </details>
 
     <footer>
       <h2>Source</h2>
-      <p class="source">Gold / silver / bronze is the place, not the inspect slot. Gold: Reserve, 2/175 Melville, Jean, Thelma. Six new live listings added 20 Sep night from the same envelope (Kanimbla, Birdwood, Waverley, Point Walter, 3/30 Preston, Stock Rd). Domain and realestate.com.au blocked bots. Jean REIWA Mon 21 4:45 clashes Bridges — not locked. Bid slight over only on Reserve, Melville Parade, and Loftus.</p>
+      <p>Asks and listing pages checked 20 September 2026 evening from REIWA, TenantApp, Central Estate, and IRE. Fair is the suburb comparable already on file, not a new valuation. Kanimbla and Birdwood were added to the shortlist that evening. Domain and realestate.com.au blocked automated checks. Requests: Fiona/James Dent, jadent@iinet.net.au, 0437375399.</p>
     </footer>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const tabs = document.querySelectorAll(".tab");
-    const panels = { "tab-run": "panel-run", "tab-wait": "panel-wait", "tab-map": "panel-map" };
     let map, mapReady = false;
-
+    const seen = new Set([
+      "Lucknow", "Reserve", "Melville Pde", "Bridges", "Delhi", "Loftus", "Carr",
+      "Ardross", "Jean", "Thelma", "Bagot", "Warragoon", "Outram", "Mill Point", "Bristol"
+    ]);
     const pins = [
-      { tier: "silver", name: "Lucknow", lat: -31.9451221, lng: 115.8410341, ask: "$750", offer: "$750", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/2022471", thumb: "https://imagecdn.reiwa.com.au/listing/19/5054319-03.jpg", address: "3/3-9 Lucknow Pl, West Perth" },
-      { tier: "gold", name: "Reserve", lat: -31.9375199, lng: 115.8065819, ask: "$800", offer: "$800 / $820", bid: "Slight over OK", href: "https://reiwa.com.au/59-reserve-street-wembley-5057912/", thumb: "https://imagecdn.reiwa.com.au/listing/12/5057912-02.jpg", address: "59 Reserve St, Wembley" },
-      { tier: "gold", name: "Melville Pde", lat: -31.9917677, lng: 115.8553138, ask: "$795", offer: "$795 / $810", bid: "Slight over OK", href: "https://www.tenantapp.com.au/Rentals/ViewListing/5639860", thumb: "https://imagecdn.reiwa.com.au/listing/23/5049323-01.jpg", address: "2/175 Melville Pde, Como" },
-      { tier: "silver", name: "Bridges", lat: -32.0348445, lng: 115.7984331, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/20-18-bridges-road-melville-5055205/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5055205-02.jpg", address: "20/18 Bridges Rd, Melville" },
-      { tier: "silver", name: "Delhi", lat: -31.9462366, lng: 115.8466007, ask: "$785", offer: "$785", bid: "Don't over", href: "https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/", thumb: "https://imagecdn.reiwa.com.au/listing/35/5048935-02.jpg", address: "36/5 Delhi St, West Perth" },
-      { tier: "silver", name: "Loftus", lat: -31.9338487, lng: 115.8462841, ask: "$800", offer: "$800 / $820", bid: "Slight over OK", href: "https://reiwa.com.au/132-loftus-street-north-perth-5060984/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5060984-02.jpg", address: "132 Loftus St, North Perth" },
-      { tier: "bronze", name: "Carr", lat: -31.9391852, lng: 115.8504578, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/", thumb: "https://imagecdn.reiwa.com.au/listing/57/5055857-02.jpg", address: "48/15-19 Carr St, West Perth" },
-      { tier: "gold", name: "Jean", lat: -32.0745769, lng: 115.7721493, ask: "$800", offer: "$800", bid: "Don't over", href: "https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5061125-02.jpg", address: "18B Jean St, Beaconsfield" },
-      { tier: "gold", name: "Thelma", lat: -31.996319, lng: 115.8633304, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/2-3-thelma-street-como-5059884/", thumb: "https://imagecdn.reiwa.com.au/listing/84/5059884-01.jpg", address: "2/3 Thelma St, Como" },
-      { tier: "silver", name: "Bagot", lat: -31.9501628, lng: 115.8274833, ask: "$750", offer: "$720–$750", bid: "Don't over", href: "https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/", thumb: "https://centralestate.com.au/wp-content/uploads/2026/07/6a4cb508-d9be-471e-9aca-e0ae978c58cb-Subiaco.jpg", address: "3/144 Bagot Rd, Subiaco" },
-      { tier: "silver", name: "1/147 Melville", lat: -31.99235, lng: 115.85485, ask: "$850", offer: "$850", bid: "Don't over", href: "https://reiwa.com.au/1-147-melville-parade-como-5038592/", thumb: "https://imagecdn.reiwa.com.au/listing/92/5038592-03.jpg", address: "1/147 Melville Pde, Como" },
-      { tier: "silver", name: "1/127 Robert", lat: -32.0111599, lng: 115.8578526, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/1-127-robert-street-como-5060939/", thumb: "https://imagecdn.reiwa.com.au/listing/39/5060939-02.jpg", address: "1/127 Robert St, Como" },
-      { tier: "silver", name: "Rosalind", lat: -32.0844175, lng: 115.8100808, ask: "$650", offer: "$650", bid: "Don't over", href: "https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/", thumb: "https://imagecdn.reiwa.com.au/listing/05/5041805-01.jpg", address: "12/15 Rosalind Way, Coolbellup" },
-      { tier: "silver", name: "Ardross", lat: -32.0141173, lng: 115.8372961, ask: "$825", offer: "$800–$825", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3965183", thumb: "https://inspectre.blob.core.windows.net/images/normal/848b2c78-10f2-90c2-aa13-331e320541a3.jpg", address: "105A Ardross St, Applecross" },
-      { tier: "silver", name: "Earlston", lat: -32.0446351, lng: 115.8330758, ask: "$850", offer: "$850", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6205436", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-HarcourtsPS/img_6205436_48e0a52e63860bdf65301c7d99331e76.jpg?1789124176", address: "4/21 Earlston Pl, Booragoon" },
-      { tier: "silver", name: "Warragoon", lat: -32.0257517, lng: 115.8103502, ask: "$700", offer: "$700", bid: "Don't over", href: "https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/", thumb: "https://imagecdn.reiwa.com.au/listing/93/5060593-02.jpg", address: "44A Warragoon Cr, Attadale" },
-      { tier: "bronze", name: "Herdsman", lat: -31.9288025, lng: 115.8147734, ask: "$630", offer: "$630", bid: "Don't over", href: "https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/", thumb: "https://imagecdn.reiwa.com.au/listing/78/5053878-01.jpg", address: "22c/49 Herdsman Pde, Wembley" },
-      { tier: "bronze", name: "Outram", lat: -31.948737, lng: 115.83992, ask: "$820", offer: "$770–$800", bid: "Slight under", href: "https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/", thumb: "https://imagecdn.reiwa.com.au/listing/97/5054397-01.jpg", address: "302a/48-50 Outram St, West Perth" },
-      { tier: "bronze", name: "Adelaide", lat: -31.959116, lng: 115.8710129, ask: "$695", offer: "$680–$695", bid: "Don't over", href: "https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/", thumb: "https://imagecdn.reiwa.com.au/listing/25/5053125-02.jpg", address: "53/170 Adelaide Tce, East Perth" },
-      { tier: "bronze", name: "Axford", lat: -31.9974041, lng: 115.8679615, ask: "$800", offer: "$780–$800", bid: "Don't over", href: "https://reiwa.com.au/52d-axford-street-como-5058044/", thumb: "https://imagecdn.reiwa.com.au/listing/44/5058044-02.jpg", address: "52D Axford St, Como" },
-      { tier: "bronze", name: "Bristol", lat: -32.0306554, lng: 115.782437, ask: "$660", offer: "$660", bid: "Don't over", href: "https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/", thumb: "https://imagecdn.reiwa.com.au/listing/87/5054787-02.jpg", address: "37B Bristol Ave, Bicton" },
-      { tier: "bronze", name: "Avonmore", lat: -32.0044867, lng: 115.7543061, ask: "$725", offer: "$700–$725", bid: "Don't over", href: "https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/", thumb: "https://imagecdn.reiwa.com.au/listing/07/5058707-05.jpg", address: "6/18 Avonmore Tce, Cottesloe" },
-      { tier: "bronze", name: "6/287 Canning", lat: -32.0016145, lng: 115.8614819, ask: "$600", offer: "$600", bid: "Don't over", href: "https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/", thumb: "https://images.reip.com.au/listings/6287-canning-highway-como-wa-6152/857/17451857_img_09.jpg", address: "6/287 Canning Hwy, Como" },
-      { tier: "bronze", name: "Gwelup", lat: -31.877145, lng: 115.7842419, ask: "$800", offer: "$780", bid: "Don't over", href: "https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/", thumb: "https://imagecdn.reiwa.com.au/listing/24/5056024-02.jpg", address: "12A Gwelup St, Karrinyup" },
-      { tier: "bronze", name: "2/447 Canning", lat: -32.00215, lng: 115.86235, ask: "$620", offer: "$600–$620", bid: "Don't over", href: "https://reiwa.com.au/2-447-canning-highway-como-5057777/", thumb: "https://imagecdn.reiwa.com.au/listing/77/5057777-01.jpg", address: "2/447 Canning Hwy, Como" },
-      { tier: "bronze", name: "Mill Point", lat: -31.9773533, lng: 115.8709898, ask: "$765", offer: "$765 furnished", bid: "Don't over", href: "https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/", thumb: "https://imagecdn.reiwa.com.au/listing/66/5055166-03.jpg", address: "1/286 Mill Point Rd, South Perth" },
-      { tier: "bronze", name: "Marmion", lat: -32.0469635, lng: 115.7866167, ask: "$850", offer: "$820", bid: "Slight under", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6198839", thumb: "https://inspectre.blob.core.windows.net/images/normal/V-SALTPROPERTY/img_6198839_fe27cd2a81519656d2b29c11c3a696f2.jpg", address: "225 Marmion St, Palmyra" },
-      { tier: "bronze", name: "Barker", lat: -31.9484782, lng: 115.8200614, ask: "$750", offer: "$700–$730", bid: "Don't chase", href: "https://reiwa.com.au/4-420-barker-road-subiaco-5059363/", thumb: "https://imagecdn.reiwa.com.au/listing/63/5059363-06.jpg", address: "4/420 Barker Rd, Subiaco" },
-      { tier: "bronze", name: "Kitchener", lat: -32.0364776, lng: 115.7981848, ask: "$670", offer: "$650", bid: "Don't over", href: "https://reiwa.com.au/1-27-kitchener-road-melville-5058775/", thumb: "https://imagecdn.reiwa.com.au/listing/75/5058775-02.jpg", address: "1/27 Kitchener Rd, Melville" },
-      { tier: "bronze", name: "3/59 Robert", lat: -32.01165, lng: 115.8584, ask: "$640", offer: "$640", bid: "Don't over", href: "https://reiwa.com.au/3-59-robert-street-como-5056144/", thumb: "https://inspectre.blob.core.windows.net/images/normal/032c81c8-d753-ed22-12fc-493577ead1dd.jpg", address: "3/59 Robert St, Como" },
-      { tier: "silver", name: "Kanimbla", lat: -32.0341807, lng: 115.7885382, ask: "$860", offer: "$830–$860", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6220647", thumb: "https://images.reip.com.au/listings/28-kanimbla-street-bicton-wa-6157/711/17460711_img_01.jpg", address: "2/8 Kanimbla St, Bicton" },
-      { tier: "silver", name: "Birdwood", lat: -32.0359178, lng: 115.7783701, ask: "$775", offer: "$775", bid: "Don't over", href: "https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/", thumb: "https://imagecdn.reiwa.com.au/listing/95/5057895-02.jpg", address: "2/37 Birdwood Circus West, Bicton" },
-      { tier: "bronze", name: "Waverley", lat: -32.080287, lng: 115.807881, ask: "$750", offer: "$750", bid: "Don't over", href: "https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/", thumb: "https://imagecdn.reiwa.com.au/listing/60/5060560-01.jpg", address: "10A Waverley Rd, Coolbellup" },
-      { tier: "bronze", name: "Point Walter", lat: -32.0298119, lng: 115.7845382, ask: "$695", offer: "$695", bid: "Don't over", href: "https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/", thumb: "https://imagecdn.reiwa.com.au/listing/22/5044022-02.jpg", address: "9/27 Point Walter Rd, Bicton" },
-      { tier: "bronze", name: "3/30 Preston", lat: -31.9942973, lng: 115.8654637, ask: "$620", offer: "$620", bid: "Don't over", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3918641", thumb: "https://inspectre.blob.core.windows.net/images/normal/AP3257/img_3918641_00cb26ff4fe1c5b79d4b1d0b0a997620.jpg", address: "3/30 Preston St, Como" },
-      { tier: "bronze", name: "Stock Rd", lat: -32.0318391, lng: 115.7935573, ask: "$750", offer: "$700–$750", bid: "Don't chase", href: "https://reiwa.com.au/1-121-stock-road-attadale-5057823/", thumb: "https://imagecdn.reiwa.com.au/listing/23/5057823-01.jpg", address: "1/121 Stock Rd, Attadale" }
+      { name: "Lucknow", lat: -31.9451221, lng: 115.8410341, ask: "750", href: "https://www.tenantapp.com.au/Rentals/ViewListing/2022471", address: "3/3-9 Lucknow Pl, West Perth" },
+      { name: "Reserve", lat: -31.9375199, lng: 115.8065819, ask: "800", href: "https://reiwa.com.au/59-reserve-street-wembley-5057912/", address: "59 Reserve St, Wembley" },
+      { name: "Melville Pde", lat: -31.9917677, lng: 115.8553138, ask: "795", href: "https://www.tenantapp.com.au/Rentals/ViewListing/5639860", address: "2/175 Melville Pde, Como" },
+      { name: "Bridges", lat: -32.0348445, lng: 115.7984331, ask: "700", href: "https://reiwa.com.au/20-18-bridges-road-melville-5055205/", address: "20/18 Bridges Rd, Melville" },
+      { name: "Delhi", lat: -31.9462366, lng: 115.8466007, ask: "785", href: "https://reiwa.com.au/36-5-delhi-street-west-perth-5048935/", address: "36/5 Delhi St, West Perth" },
+      { name: "Loftus", lat: -31.9338487, lng: 115.8462841, ask: "800", href: "https://reiwa.com.au/132-loftus-street-north-perth-5060984/", address: "132 Loftus St, North Perth" },
+      { name: "Carr", lat: -31.9391852, lng: 115.8504578, ask: "750", href: "https://reiwa.com.au/48-15-19-carr-street-west-perth-5055857/", address: "48/15-19 Carr St, West Perth" },
+      { name: "Jean", lat: -32.0745769, lng: 115.7721493, ask: "800", href: "https://reiwa.com.au/18b-jean-street-beaconsfield-5061125/", address: "18B Jean St, Beaconsfield" },
+      { name: "Thelma", lat: -31.996319, lng: 115.8633304, ask: "750", href: "https://reiwa.com.au/2-3-thelma-street-como-5059884/", address: "2/3 Thelma St, Como" },
+      { name: "Bagot", lat: -31.9501628, lng: 115.8274833, ask: "750", href: "https://centralestate.com.au/rental/3-144-bagot-road-subiaco-wa-6008/", address: "3/144 Bagot Rd, Subiaco" },
+      { name: "1/147 Melville", lat: -31.99235, lng: 115.85485, ask: "850", href: "https://reiwa.com.au/1-147-melville-parade-como-5038592/", address: "1/147 Melville Pde, Como" },
+      { name: "1/127 Robert", lat: -32.0111599, lng: 115.8578526, ask: "700", href: "https://reiwa.com.au/1-127-robert-street-como-5060939/", address: "1/127 Robert St, Como" },
+      { name: "Rosalind", lat: -32.0844175, lng: 115.8100808, ask: "650", href: "https://reiwa.com.au/12-15-rosalind-way-coolbellup-5041805/", address: "12/15 Rosalind Way, Coolbellup" },
+      { name: "Ardross", lat: -32.0141173, lng: 115.8372961, ask: "825", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3965183", address: "105A Ardross St, Applecross" },
+      { name: "Earlston", lat: -32.0446351, lng: 115.8330758, ask: "850", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6205436", address: "4/21 Earlston Pl, Booragoon" },
+      { name: "Warragoon", lat: -32.0257517, lng: 115.8103502, ask: "700", href: "https://reiwa.com.au/44a-warragoon-crescent-attadale-5060593/", address: "44A Warragoon Cr, Attadale" },
+      { name: "Herdsman", lat: -31.9288025, lng: 115.8147734, ask: "630", href: "https://reiwa.com.au/22c-49-herdsman-parade-wembley-5053878/", address: "22c/49 Herdsman Pde, Wembley" },
+      { name: "Outram", lat: -31.948737, lng: 115.83992, ask: "820", href: "https://reiwa.com.au/302a-48-50-outram-street-west-perth-5054397/", address: "302a/48-50 Outram St, West Perth" },
+      { name: "Adelaide", lat: -31.959116, lng: 115.8710129, ask: "695", href: "https://reiwa.com.au/53-170-adelaide-terrace-east-perth-5053125/", address: "53/170 Adelaide Tce, East Perth" },
+      { name: "Axford", lat: -31.9974041, lng: 115.8679615, ask: "800", href: "https://reiwa.com.au/52d-axford-street-como-5058044/", address: "52D Axford St, Como" },
+      { name: "Bristol", lat: -32.0306554, lng: 115.782437, ask: "660", href: "https://reiwa.com.au/37b-bristol-avenue-bicton-5054787/", address: "37B Bristol Ave, Bicton" },
+      { name: "Avonmore", lat: -32.0044867, lng: 115.7543061, ask: "725", href: "https://reiwa.com.au/6-18-avonmore-cottesloe-5058707/", address: "6/18 Avonmore Tce, Cottesloe" },
+      { name: "6/287 Canning", lat: -32.0016145, lng: 115.8614819, ask: "600", href: "https://portal.reip.com.au/real-estate/property/17451857-6287-canning-highway-como-wa-6152/", address: "6/287 Canning Hwy, Como" },
+      { name: "Gwelup", lat: -31.877145, lng: 115.7842419, ask: "800", href: "https://reiwa.com.au/12a-gwelup-street-karrinyup-5056024/", address: "12A Gwelup St, Karrinyup" },
+      { name: "2/447 Canning", lat: -32.00215, lng: 115.86235, ask: "620", href: "https://reiwa.com.au/2-447-canning-highway-como-5057777/", address: "2/447 Canning Hwy, Como" },
+      { name: "Mill Point", lat: -31.9773533, lng: 115.8709898, ask: "765", href: "https://reiwa.com.au/1-286-mill-point-road-south-perth-5055166/", address: "1/286 Mill Point Rd, South Perth" },
+      { name: "Marmion", lat: -32.0469635, lng: 115.7866167, ask: "850", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6198839", address: "225 Marmion St, Palmyra" },
+      { name: "Barker", lat: -31.9484782, lng: 115.8200614, ask: "750", href: "https://reiwa.com.au/4-420-barker-road-subiaco-5059363/", address: "4/420 Barker Rd, Subiaco" },
+      { name: "Kitchener", lat: -32.0364776, lng: 115.7981848, ask: "670", href: "https://reiwa.com.au/1-27-kitchener-road-melville-5058775/", address: "1/27 Kitchener Rd, Melville" },
+      { name: "3/59 Robert", lat: -32.01165, lng: 115.8584, ask: "640", href: "https://reiwa.com.au/3-59-robert-street-como-5056144/", address: "3/59 Robert St, Como" },
+      { name: "Kanimbla", lat: -32.0341807, lng: 115.7885382, ask: "860", href: "https://www.tenantapp.com.au/Rentals/ViewListing/6220647", address: "2/8 Kanimbla St, Bicton" },
+      { name: "Birdwood", lat: -32.0359178, lng: 115.7783701, ask: "775", href: "https://reiwa.com.au/2-37-birdwood-circus-west-bicton-5057895/", address: "2/37 Birdwood Circus West, Bicton" },
+      { name: "Waverley", lat: -32.080287, lng: 115.807881, ask: "750", href: "https://reiwa.com.au/10a-waverley-road-coolbellup-5060560/", address: "10A Waverley Rd, Coolbellup" },
+      { name: "Point Walter", lat: -32.0298119, lng: 115.7845382, ask: "695", href: "https://reiwa.com.au/9-27-point-walter-road-bicton-5044022/", address: "9/27 Point Walter Rd, Bicton" },
+      { name: "3/30 Preston", lat: -31.9942973, lng: 115.8654637, ask: "620", href: "https://www.tenantapp.com.au/Rentals/ViewListing/3918641", address: "3/30 Preston St, Como" },
+      { name: "Stock Rd", lat: -32.0318391, lng: 115.7935573, ask: "750", href: "https://reiwa.com.au/1-121-stock-road-attadale-5057823/", address: "1/121 Stock Rd, Attadale" }
     ];
 
-    const colours = { gold: "#ffcc00", silver: "#b8c4d4", bronze: "#a85214" };
-    const bookedOrLooked = new Set([
-      "Lucknow", "Reserve", "Melville Pde", "Bridges", "Delhi", "Loftus", "Carr", "Ardross",
-      "Jean", "Thelma", "Bagot", "Warragoon", "Outram", "Mill Point", "Bristol"
-    ]);
-
-    function pinIcon(tier, seen) {
-      const fill = colours[tier];
-      const ring = seen ? "#5dcc86" : "#ef6d68";
-      const size = window.matchMedia("(max-width: 720px)").matches ? 28 : 24;
-      const html = '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + fill + ';border:4px solid ' + ring + ';box-sizing:border-box"></div>';
+    function pinIcon(filled) {
+      const size = window.matchMedia("(max-width: 720px)").matches ? 18 : 14;
+      const html = filled
+        ? '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:#121314;box-sizing:border-box"></div>'
+        : '<div style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:#faf8f3;border:2px solid #121314;box-sizing:border-box"></div>';
       return L.divIcon({ className: "", html: html, iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -(size / 2 + 1)] });
     }
 
@@ -582,14 +517,11 @@
         attribution: "&copy; OpenStreetMap"
       }).addTo(map);
       const group = L.featureGroup();
-      const popupWidth = window.matchMedia("(max-width: 720px)").matches ? 240 : 280;
       pins.forEach(function (p) {
-        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(p.tier, bookedOrLooked.has(p.name)), title: p.address });
+        const marker = L.marker([p.lat, p.lng], { icon: pinIcon(seen.has(p.name)), title: p.address });
         marker.bindPopup(
-          '<div class="popup"><a href="' + p.href + '"><img alt="" src="' + p.thumb + '"></a><b>' + p.address + '</b>' +
-          '<div class="meta">' + p.tier + ' · ask ' + p.ask + ' · offer ' + p.offer + ' · ' + p.bid + '</div>' +
-          '<a href="' + p.href + '">Listing</a></div>',
-          { maxWidth: popupWidth, autoPanPadding: [28, 28] }
+          '<div class="popup"><b>' + p.address + '</b><div class="meta">Ask ' + p.ask + '</div><a href="' + p.href + '">Listing</a></div>',
+          { maxWidth: 240, autoPanPadding: [28, 28] }
         );
         marker.addTo(group);
       });
@@ -609,28 +541,12 @@
       });
     });
 
-    tabs.forEach(function (tab) {
-      tab.addEventListener("click", function () {
-        tabs.forEach(function (t) { t.setAttribute("aria-selected", String(t === tab)); });
-        Object.keys(panels).forEach(function (id) {
-          document.getElementById(panels[id]).classList.toggle("active", id === tab.id);
+    document.getElementById("map-block").addEventListener("toggle", function () {
+      if (this.open) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(initMap);
         });
-        if (window.matchMedia("(max-width: 720px)").matches) {
-          document.querySelector(".tabs").scrollIntoView({ block: "start" });
-        }
-        if (tab.id === "tab-map") {
-          requestAnimationFrame(function () {
-            requestAnimationFrame(initMap);
-          });
-        }
-      });
-    });
-
-    window.addEventListener("resize", function () {
-      if (mapReady && map) map.invalidateSize();
-    });
-    window.addEventListener("orientationchange", function () {
-      setTimeout(function () { if (mapReady && map) map.invalidateSize(); }, 250);
+      }
     });
   </script>
 </body>
